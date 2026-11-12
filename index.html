@@ -76,13 +76,15 @@ input:focus{border-color:var(--blue2)}
 .cuts{display:flex;align-items:center;gap:8px;color:var(--muted);letter-spacing:4px;font-variant-numeric:tabular-nums}
 .empty{color:var(--muted);text-align:center;padding:16px 0;font-size:14px}
 
-.grid{display:grid;grid-template-columns:90px repeat(5,minmax(0,1fr));column-gap:4px;row-gap:0;text-align:center;align-items:center;font-variant-numeric:tabular-nums}
-.pb{font-size:34px;line-height:1.05;font-weight:700;color:var(--text)}
-.pm{font-size:30px;line-height:1.05;font-weight:500;color:var(--text)}
+.pc-row{display:flex;align-items:baseline;line-height:1.05}
+.pc-lbl{width:92px;flex:none;font-size:14px;font-weight:600;color:var(--muted)}
+.pc-d{display:inline-block;width:30px;text-align:center;font-variant-numeric:tabular-nums}
+.pc-n{font-size:13px;font-weight:600;color:var(--faint)}
+.pb{font-size:38px;font-weight:700;color:var(--text)}
+.pm{font-size:34px;font-weight:500;color:var(--text)}
 .pm.none{color:var(--faint)}
-.keys{margin-top:10px;padding-top:8px;border-top:1px solid var(--line);row-gap:2px}
-.k{color:var(--muted);font-size:16px;font-weight:600}
-.rh{text-align:left;font-size:14px;font-weight:600;color:var(--muted)}
+.pc-k{font-size:18px;font-weight:600;color:var(--muted)}
+.pc-sep{border-top:1px solid var(--line);margin:8px 0 6px}
 
 textarea{width:100%;font:600 18px/1.45 "Rajdhani",ui-monospace,Menlo,monospace;letter-spacing:1px;color:var(--text);background:var(--soft);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;outline:none;resize:vertical;text-transform:uppercase}
 textarea:focus{border-color:var(--blue2)}
@@ -311,10 +313,9 @@ function chart(x){
   if(!ok5(m)){$('chart').innerHTML='<div class="msg wa"><i class="ti ti-alert-triangle"></i><span>Set the master key to see the pinning.</span></div>';return}
   const b=[],p=[];
   for(let i=0;i<5;i++){const c=+x.cuts[i],k=+m[i];b.push(Math.min(c,k));p.push(c===k?null:Math.abs(c-k))}
-  $('chart').innerHTML=`<div class="grid"><div></div>${[1,2,3,4,5].map(n=>`<div class="k" style="font-size:14px">${n}</div>`).join('')}
-  <div class="rh">Bottom</div>${b.map(v=>`<div class="pb">${v}</div>`).join('')}
-  <div class="rh">Master</div>${p.map(v=>v===null?'<div class="pm none">–</div>':`<div class="pm">${v}</div>`).join('')}</div>
-  <div class="grid keys"><div class="rh">Change key</div>${x.cuts.split('').map(v=>`<div class="k">${v}</div>`).join('')}<div class="rh">Master key</div>${m.split('').map(v=>`<div class="k">${v}</div>`).join('')}</div>`;
+  const d=(arr,cls)=>arr.map(v=>`<span class="pc-d ${v===null?cls+' none':cls}">${v===null?'–':v}</span>`).join('');
+  const row=(l,inner)=>`<div class="pc-row"><span class="pc-lbl">${l}</span><span>${inner}</span></div>`;
+  $('chart').innerHTML=row('',d([1,2,3,4,5],'pc-n'))+row('Bottom',d(b,'pb'))+row('Master',d(p,'pm'))+'<div class="pc-sep"></div>'+row('Change key',d([...x.cuts],'pc-k'))+row('Master key',d([...m],'pc-k'));
 }
 const rowEl=c=>$('list').querySelector(`.row[data-c="${c}"]`);
 function openDet(c,scroll){
