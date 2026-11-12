@@ -44,7 +44,6 @@ input:focus{border-color:var(--blue2)}
 .hdr h1{font-size:24px;font-weight:700;line-height:1.25;margin:0;display:flex;gap:8px;align-items:flex-start}
 .hdr .sub{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px}
 .hdr .cnt{font-size:15px;color:#B5D4F4}
-.hbtns{display:flex;gap:6px}
 .hbtn{height:36px;padding:0 12px;border-radius:10px;border:0;background:#fff;color:var(--navy);font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:5px}
 .hbtn.ghost{background:rgba(255,255,255,.14);color:#fff}
 
@@ -88,8 +87,25 @@ input:focus{border-color:var(--blue2)}
 
 textarea{width:100%;font:600 18px/1.45 "Rajdhani",ui-monospace,Menlo,monospace;letter-spacing:1px;color:var(--text);background:var(--soft);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;outline:none;resize:vertical;text-transform:uppercase}
 textarea:focus{border-color:var(--blue2)}
+textarea::placeholder{text-transform:none;letter-spacing:0}
 .implist{font-size:15px;margin:4px 0 0 26px;padding:0;color:inherit}
 .login{max-width:420px;margin:0 auto}
+.tabs{display:flex;background:rgba(255,255,255,.14);border-radius:11px;padding:3px;gap:2px}
+.tabs button{border:0;background:transparent;color:#DCEBFB;font-weight:700;font-size:15px;height:32px;padding:0 14px;border-radius:9px;display:inline-flex;align-items:center;gap:5px;transition:background-color .2s,color .2s}
+.tabs button.on{background:#fff;color:var(--navy)}
+.seg{display:flex;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px;margin-bottom:10px}
+.seg button{flex:1;border:0;background:transparent;color:var(--muted);font-weight:700;font-size:15px;height:32px;border-radius:8px;transition:background-color .2s,color .2s}
+.seg button.on{background:var(--card);color:var(--blue);box-shadow:0 0 0 1px var(--line)}
+#det{position:relative}
+.copyBtn{position:absolute;top:8px;right:8px;height:32px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--blue);font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:4px}
+.copyBtn.done{color:var(--ok);border-color:var(--ok)}
+.stock{display:grid;grid-template-columns:1fr 1fr 1fr;row-gap:0;text-align:center;font-variant-numeric:tabular-nums}
+.stock .h{font-size:14px;font-weight:600;color:var(--muted);padding-bottom:4px;border-bottom:1px solid var(--line)}
+.stock .c{font-size:20px;padding:5px 0;border-bottom:1px solid var(--line)}
+.stock .sz{font-weight:700}
+.stock .z{color:var(--faint)}
+.stock .t{font-weight:700;font-size:18px;padding-top:6px}
+.acct{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:16px}
 .banner{background:var(--warnBg);color:var(--warn);border-radius:12px;padding:10px 12px;font-size:15px;margin-bottom:12px;display:flex;gap:8px}
 .sync{font-size:14px;color:#B5D4F4;display:inline-flex;align-items:center;gap:4px}
 </style>
@@ -105,9 +121,9 @@ textarea:focus{border-color:var(--blue2)}
       <h1><i class="ti ti-key" style="margin-top:3px"></i><span>Gainsborough Building Key Codes</span></h1>
       <div class="sub hide" id="hdrSub">
         <div><div class="cnt" id="cnt"></div><div class="sync" id="sync"></div></div>
-        <div class="hbtns">
-          <button class="hbtn" id="mkBtn"><i class="ti ti-settings"></i>Master key</button>
-          <button class="hbtn ghost" id="outBtn" aria-label="Sign out"><i class="ti ti-logout"></i></button>
+        <div class="tabs" role="tablist">
+          <button class="on" data-tab="codesView" role="tab"><i class="ti ti-list"></i>Codes</button>
+          <button data-tab="settingsView" role="tab"><i class="ti ti-settings"></i>Settings</button>
         </div>
       </div>
     </div>
@@ -128,61 +144,93 @@ textarea:focus{border-color:var(--blue2)}
 
   <!-- APP -->
   <div id="appView" class="hide">
-    <div class="card hide" id="mkBox" style="border-color:var(--amber)">
-      <div class="cardt"><span class="ic" style="background:var(--warnBg);color:var(--warn)"><i class="ti ti-key"></i></span>Master key</div>
-      <div class="lab">Master key cuts (5 cuts, 0–8)</div>
-      <input id="mkIn" class="mid" inputmode="numeric" maxlength="5" autocomplete="off">
-      <div class="msg er hide" id="mkErr"></div>
-      <button class="btn pri" id="mkSave">Save master key</button>
-      <div class="lab" style="margin-top:18px">Backup</div>
-      <button class="btn" id="exportBtn"><i class="ti ti-download"></i>Export all codes</button>
-      <div class="hint">Saves a file of every code and the master key. Keep it somewhere safe.</div>
-      <div class="lab" style="margin-top:18px">Bulk import</div>
-      <textarea id="impIn" rows="6" placeholder="One code per line, then its 5 cuts&#10;1234  15026&#10;5678  13442" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"></textarea>
-      <div id="impSum" class="hide"></div>
-      <button class="btn" id="impCheck"><i class="ti ti-list-check"></i>Check list</button>
-      <button class="btn pri hide" id="impGo"></button>
+
+    <!-- CODES TAB -->
+    <div id="codesView">
+      <div class="msg wa hide" id="noMaster" style="margin:0 0 12px"><i class="ti ti-alert-triangle"></i><span>Set the master key in Settings so pinning can be worked out.</span></div>
+
+      <div class="card">
+        <div class="seg" role="tablist"><button class="on" data-mode="code">Search by code</button><button data-mode="cuts">Search by cuts</button></div>
+        <div style="display:flex;gap:8px">
+          <input id="code" class="big" inputmode="numeric" placeholder="Code" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+          <button id="kbBtn" class="kb" aria-label="Switch keyboard">ABC</button>
+        </div>
+        <div class="hint" id="kbHint">Tap ABC if the code has letters</div>
+
+        <div id="found" class="hide">
+          <div class="msg ok"><i class="ti ti-circle-check"></i><span id="foundMsg"></span></div>
+          <div class="two"><button class="btn pri" id="foundPin" style="flex:2"><i class="ti ti-list-numbers"></i>Pinning</button><button class="btn danger" id="del"><i class="ti ti-trash"></i>Delete</button></div>
+          <button class="btn danger hide" id="delYes"></button>
+        </div>
+
+        <div id="nw" class="hide">
+          <div class="msg wa"><i class="ti ti-plus"></i><span id="nwMsg"></span></div>
+          <div class="lab">Change key cuts (5 cuts, 0–8)</div>
+          <input id="cuts" class="mid" inputmode="numeric" maxlength="5" placeholder="00000" autocomplete="off">
+          <div class="msg er hide" id="cutErr"></div>
+          <div class="msg wa hide" id="same"></div>
+          <button class="btn pri" id="save">Save code</button>
+        </div>
+
+        <div id="cutsRes" class="hide">
+          <div class="msg" id="cutsMsg"></div>
+          <button class="btn pri hide" id="cutsPin"><i class="ti ti-list-numbers"></i>Pinning</button>
+        </div>
+      </div>
+
+      <div id="detHome" class="hide">
+        <div id="det">
+          <button class="copyBtn" id="copyBtn"><i class="ti ti-copy"></i><span>Copy</span></button>
+          <div id="chart"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span class="cardt" style="margin:0"><span class="ic" style="background:var(--okBg);color:var(--ok)"><i class="ti ti-list"></i></span><span id="lt">All codes</span></span>
+          <span style="font-size:14px;color:var(--muted)">tap for pinning</span>
+        </div>
+        <div id="list"></div>
+        <div class="empty hide" id="empty"></div>
+      </div>
     </div>
 
-    <div class="msg wa hide" id="noMaster" style="margin:0 0 12px"><i class="ti ti-alert-triangle"></i><span>Set the master key first so pinning can be worked out.</span></div>
-
-    <div class="card">
-      <div class="cardt"><span class="ic" style="background:var(--chip);color:var(--blue)"><i class="ti ti-search"></i></span>Look up or add a code</div>
-      <div style="display:flex;gap:8px">
-        <input id="code" class="big" inputmode="numeric" placeholder="Code" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
-        <button id="kbBtn" class="kb" aria-label="Switch keyboard">ABC</button>
-      </div>
-      <div class="hint" id="kbHint">Tap ABC if the code has letters</div>
-
-      <div id="found" class="hide">
-        <div class="msg ok"><i class="ti ti-circle-check"></i><span id="foundMsg"></span></div>
-        <div class="two"><button class="btn pri" id="foundPin" style="flex:2"><i class="ti ti-list-numbers"></i>Pinning</button><button class="btn danger" id="del"><i class="ti ti-trash"></i>Delete</button></div>
-        <button class="btn danger hide" id="delYes"></button>
+    <!-- SETTINGS TAB -->
+    <div id="settingsView" class="hide">
+      <div class="card" style="border-color:var(--amber)">
+        <div class="cardt"><span class="ic" style="background:var(--warnBg);color:var(--warn)"><i class="ti ti-key"></i></span>Master key</div>
+        <div class="lab">Master key cuts (5 cuts, 0–8)</div>
+        <input id="mkIn" class="mid" inputmode="numeric" maxlength="5" autocomplete="off">
+        <div class="msg er hide" id="mkErr"></div>
+        <div class="msg ok hide" id="mkOk"><i class="ti ti-circle-check"></i><span>Master key saved</span></div>
+        <button class="btn pri" id="mkSave">Save master key</button>
       </div>
 
-      <div id="nw" class="hide">
-        <div class="msg wa"><i class="ti ti-plus"></i><span id="nwMsg"></span></div>
-        <div class="lab">Change key cuts (5 cuts, 0–8)</div>
-        <input id="cuts" class="mid" inputmode="numeric" maxlength="5" placeholder="00000" autocomplete="off">
-        <div class="msg er hide" id="cutErr"></div>
-        <div class="msg wa hide" id="same"></div>
-        <button class="btn pri" id="save">Save code</button>
+      <div class="card">
+        <div class="cardt"><span class="ic" style="background:var(--chip);color:var(--blue)"><i class="ti ti-box"></i></span>Pin stock</div>
+        <div class="hint" style="margin:0 0 8px">How many of each pin size all your codes use, so you know what to keep in the van.</div>
+        <div id="stock"></div>
       </div>
-    </div>
 
-    <div id="detHome" class="hide">
-    <div id="det">
-      <div id="chart"></div>
-    </div>
-    </div>
-
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-        <span class="cardt" style="margin:0"><span class="ic" style="background:var(--okBg);color:var(--ok)"><i class="ti ti-list"></i></span><span id="lt">All codes</span></span>
-        <span style="font-size:14px;color:var(--muted)">tap for pinning</span>
+      <div class="card">
+        <div class="cardt"><span class="ic" style="background:var(--okBg);color:var(--ok)"><i class="ti ti-file-import"></i></span>Bulk import</div>
+        <textarea id="impIn" rows="6" placeholder="One code per line, then its 5 cuts&#10;1234  15026&#10;5678  13442" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"></textarea>
+        <div id="impSum" class="hide"></div>
+        <button class="btn" id="impCheck"><i class="ti ti-list-check"></i>Check list</button>
+        <button class="btn pri hide" id="impGo"></button>
       </div>
-      <div id="list"></div>
-      <div class="empty hide" id="empty"></div>
+
+      <div class="card">
+        <div class="cardt"><span class="ic" style="background:var(--soft);color:var(--muted)"><i class="ti ti-download"></i></span>Backup</div>
+        <button class="btn" id="exportBtn" style="margin-top:4px"><i class="ti ti-download"></i>Export all codes</button>
+        <div class="hint">Saves a file of every code and the master key. Keep it somewhere safe.</div>
+      </div>
+
+      <div class="card">
+        <div class="cardt"><span class="ic" style="background:var(--soft);color:var(--muted)"><i class="ti ti-user"></i></span>Account</div>
+        <div class="acct"><span>Signed in as <b id="who"></b></span></div>
+        <button class="btn danger" id="outBtn"><i class="ti ti-logout"></i>Sign out</button>
+      </div>
     </div>
   </div>
 </div>
@@ -281,12 +329,15 @@ function stopListening(){unsubCodes&&unsubCodes();unsubMaster&&unsubMaster();uns
 /* ---------- views ---------- */
 function showApp(on){show('appView',on);show('hdrSub',on);show('loginView',!on)}
 
-function render(){if(cur&&!find(cur))cur=null;renderList();renderEntry();show('noMaster',!ok5(S.master));if(cur)chart(find(cur))}
+let mode='code',tab='codesView';
+const qMatch=(x,q)=>mode==='cuts'?x.cuts.startsWith(q):x.code.startsWith(q);
+function render(){if(cur&&!find(cur))cur=null;renderList();renderEntry();show('noMaster',!ok5(S.master));if(cur)chart(find(cur));renderStock();
+  const mi=$('mkIn');if(document.activeElement!==mi)mi.value=S.master}
 function renderList(){
   const q=$('code').value,all=[...S.codes].sort(sortFn);
-  const items=q?all.filter(x=>x.code.startsWith(q)):all;
+  const items=q?all.filter(x=>qMatch(x,q)):all;
   $('cnt').textContent=S.codes.length+(S.codes.length===1?' code':' codes')+' on file';
-  $('lt').textContent=q?'Codes starting '+q:'All codes';
+  $('lt').textContent=q?(mode==='cuts'?'Cuts starting '+q:'Codes starting '+q):'All codes';
   $('detHome').appendChild($('det'));
   if(cur&&!items.some(x=>x.code===cur))cur=null;
   $('list').innerHTML=items.map(x=>`<div class="row${x.code===cur?' open':''}" data-c="${x.code}"><span class="chip">${x.code}</span><span class="cuts">${x.cuts}<i class="ti ti-chevron-right" style="letter-spacing:0"></i></span></div>`).join('');
@@ -295,7 +346,21 @@ function renderList(){
   if(cur){const r=$('list').querySelector(`.row[data-c="${cur}"]`);if(r)r.after($('det'))}
 }
 function renderEntry(){
-  const q=$('code').value,h=q?find(q):null;
+  const q=$('code').value;
+  if(mode==='cuts'){
+    show('found',false);show('nw',false);
+    const full=q.length===5,m=full?S.codes.filter(x=>x.cuts===q):[];
+    show('cutsRes',full);show('cutsPin',m.length===1);
+    if(full){const el=$('cutsMsg');
+      el.className='msg '+(m.length?'ok':'wa');
+      el.innerHTML=m.length===1?`<i class="ti ti-circle-check"></i><span>These cuts belong to code <b>${m[0].code}</b></span>`
+        :m.length?`<i class="ti ti-alert-triangle"></i><span>These cuts are on more than one code: <b>${m.map(x=>x.code).join(', ')}</b>. Tap one in the list.</span>`
+        :`<i class="ti ti-info-circle"></i><span>No code on file with these cuts.</span>`;
+      $('cutsPin').dataset.c=m.length===1?m[0].code:'';}
+    return;
+  }
+  show('cutsRes',false);
+  const h=q?find(q):null;
   show('found',!!h);show('nw',!!q&&!h);
   if(h)$('foundMsg').innerHTML='Already on file. Change key: <b style="letter-spacing:3px">'+h.cuts+'</b>';
   if(q&&!h){$('nwMsg').textContent='Code '+q+' is not on file yet. Add the cuts below to save it.';checkNew()}
@@ -328,7 +393,7 @@ function openDet(c,scroll){
   }
   const r=rowEl(c);
   if(prev===c&&det.parentNode===$('list')&&!det._a){if(scroll)r.scrollIntoView({behavior:'smooth',block:'nearest'});return}
-  cur=c;chart(x);
+  cur=c;chart(x);resetCopy();
   r.classList.add('open');r.after(det);animH(det,true);
   if(scroll)setTimeout(()=>r.scrollIntoView({behavior:'smooth',block:'nearest'}),40);
 }
@@ -346,9 +411,55 @@ function setKb(l,refocus=true){
   if(refocus){c.blur();setTimeout(()=>c.focus(),30)}
 }
 
+function pinsFor(cuts){const m=S.master,b=[],p=[];for(let i=0;i<5;i++){const c=+cuts[i],k=+m[i];b.push(Math.min(c,k));p.push(c===k?null:Math.abs(c-k))}return{b,p}}
+function renderStock(){
+  const el=$('stock');
+  if(!ok5(S.master)){el.innerHTML='<div class="msg wa" style="margin:0"><i class="ti ti-alert-triangle"></i><span>Set the master key to count pins.</span></div>';return}
+  if(!S.codes.length){el.innerHTML='<div class="empty" style="padding:6px 0">No codes yet.</div>';return}
+  const B=Array(9).fill(0),M=Array(9).fill(0);
+  S.codes.forEach(x=>{if(!ok5(x.cuts))return;const{b,p}=pinsFor(x.cuts);b.forEach(v=>B[v]++);p.forEach(v=>{if(v!==null)M[v]++})});
+  const cell=v=>`<div class="c${v?'':' z'}">${v||'–'}</div>`;
+  let h='<div class="stock"><div class="h">Pin size</div><div class="h">Bottom</div><div class="h">Master</div>';
+  for(let i=0;i<9;i++)h+=`<div class="c sz">#${i}</div>${cell(B[i])}${cell(M[i])}`;
+  h+=`<div class="t">Total</div><div class="t">${B.reduce((a,b)=>a+b,0)}</div><div class="t">${M.reduce((a,b)=>a+b,0)}</div></div>`;
+  el.innerHTML=h;
+}
+function pinText(x){const{b,p}=pinsFor(x.cuts);
+  return `Code ${x.code} pinning\nBottom: ${b.join(' ')}\nMaster: ${p.map(v=>v===null?'-':v).join(' ')}\nChange key: ${x.cuts.split('').join(' ')}`}
+async function copyText(t){
+  try{await navigator.clipboard.writeText(t);return true}catch(e){}
+  try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.position='absolute';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();const ok=document.execCommand('copy');ta.remove();return ok}catch(e){return false}
+}
+let copyTimer=null;
+function resetCopy(){clearTimeout(copyTimer);const b=$('copyBtn');b.classList.remove('done');b.innerHTML='<i class="ti ti-copy"></i><span>Copy</span>'}
+function setTab(t){
+  if(t===tab)return;const from=$(tab),to=$(t);tab=t;
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+  from._t=false;from.classList.add('hide');to._t=true;to.classList.remove('hide');
+  if(!REDUCE&&to.animate)to.animate([{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'none'}],{duration:220,easing:'cubic-bezier(.2,.8,.2,1)'});
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(t==='settingsView'){$('mkIn').value=S.master;['mkErr','mkOk'].forEach(i=>{$(i)._t=false;$(i).classList.add('hide')})}
+}
+function setMode(m){
+  if(m===mode)return;mode=m;
+  document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.mode===m));
+  const c=$('code');c.value='';$('cuts').value='';
+  if(m==='cuts'){c.setAttribute('inputmode','numeric');c.placeholder='Cuts';c.maxLength=5;show('kbBtn',false);show('kbHint',false);if(letters){letters=false;$('kbBtn').textContent='ABC';$('kbHint').textContent='Tap ABC if the code has letters'}}
+  else{c.placeholder='Code';c.removeAttribute('maxlength');show('kbBtn',true);show('kbHint',true)}
+  const dy=$('delYes');dy._t=false;dy.classList.add('hide');
+  renderEntry();renderList();c.focus();
+}
+
 /* ---------- events ---------- */
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
+document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+$('cutsPin').addEventListener('click',()=>{const c=$('cutsPin').dataset.c;if(c)openDet(c,true)});
+$('copyBtn').addEventListener('click',async e=>{e.stopPropagation();const x=find(cur);if(!x||!ok5(S.master))return;
+  const ok=await copyText(pinText(x));const b=$('copyBtn');
+  b.classList.toggle('done',ok);b.innerHTML=ok?'<i class="ti ti-check"></i><span>Copied</span>':'<i class="ti ti-x"></i><span>Couldn\'t copy</span>';
+  clearTimeout(copyTimer);copyTimer=setTimeout(resetCopy,1800)});
 $('kbBtn').addEventListener('click',()=>setKb(!letters));
-$('code').addEventListener('input',e=>{e.target.value=cl(e.target.value);$('cuts').value='';const dy=$('delYes');dy._t=false;dy.classList.add('hide');show('same',false);show('cutErr',false);renderEntry();renderList()});
+$('code').addEventListener('input',e=>{e.target.value=mode==='cuts'?dg(e.target.value,5):cl(e.target.value);$('cuts').value='';const dy=$('delYes');dy._t=false;dy.classList.add('hide');show('same',false);show('cutErr',false);renderEntry();renderList()});
 $('cuts').addEventListener('input',e=>{e.target.value=dg(e.target.value,5);checkNew()});
 $('save').addEventListener('click',async()=>{
   const c=$('code').value,v=$('cuts').value;
@@ -362,9 +473,8 @@ $('list').addEventListener('click',e=>{const r=e.target.closest('.row');if(!r)re
 $('del').addEventListener('click',()=>{$('delYes').innerHTML='<i class="ti ti-alert-triangle"></i>Tap again to delete '+$('code').value;show('delYes',!shown('delYes'))});
 $('delYes').addEventListener('click',()=>{const c=$('code').value;if(!find(c))return;show('delYes',false);
   const go=async()=>{try{await store.delCode(c)}catch(e){fail(e)}};cur===c?closeDet(go):go()});
-$('mkBtn').addEventListener('click',()=>{$('mkIn').value=S.master;show('mkErr',false);show('mkBox',!shown('mkBox'))});
-$('mkIn').addEventListener('input',e=>{e.target.value=dg(e.target.value,5);show('mkErr',false)});
-$('mkSave').addEventListener('click',async()=>{const v=$('mkIn').value;if(!ok5(v)){$('mkErr').textContent='Enter 5 cuts, each 0 to 8.';show('mkErr',true);return}try{await store.setMaster(v);show('mkBox',false)}catch(e){fail(e)}});
+$('mkIn').addEventListener('input',e=>{e.target.value=dg(e.target.value,5);show('mkErr',false);show('mkOk',false)});
+$('mkSave').addEventListener('click',async()=>{const v=$('mkIn').value;if(!ok5(v)){$('mkErr').textContent='Enter 5 cuts, each 0 to 8.';show('mkErr',true);return}try{await store.setMaster(v);$('mkIn').blur();show('mkOk',true)}catch(e){fail(e)}});
 $('exportBtn').addEventListener('click',()=>{
   const data={exported:new Date().toISOString(),master:S.master,codes:[...S.codes].sort(sortFn)};
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,1)],{type:'application/json'}));
@@ -428,14 +538,14 @@ if(DEMO){
   show('demoBanner',true);
   S.master='35246';
   S.codes=[{code:'0418',cuts:'13442'},{code:'1172',cuts:'15026'},{code:'2305',cuts:'17284'},{code:'961',cuts:'12640'},{code:'35501',cuts:'13806'},{code:'041',cuts:'15244'},{code:'12A4',cuts:'16420'}];
-  $('sync').textContent='Demo';showApp(true);render();
+  $('sync').textContent='Demo';$('who').textContent='Demo mode';showApp(true);render();
 }else{
   firebase.initializeApp(firebaseConfig);
   auth=firebase.auth();db=firebase.firestore();
   db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
   auth.onAuthStateChanged(u=>{
-    if(u){showApp(true);startListening()}
-    else{stopListening();cur=null;showApp(false);render()}
+    if(u){$('who').textContent=u.email||'';showApp(true);startListening()}
+    else{stopListening();cur=null;setTab('codesView');showApp(false);render()}
   });
 }
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
