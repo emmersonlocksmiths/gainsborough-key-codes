@@ -63,7 +63,7 @@ input:focus{border-color:var(--blue2)}
 .btn:disabled{opacity:.5}
 .two{display:flex;gap:8px}.two .btn{flex:1}
 
-.row{display:flex;justify-content:space-between;align-items:center;padding:11px 6px;border-bottom:1px solid var(--line);cursor:pointer}
+.row{display:flex;justify-content:space-between;align-items:center;padding:11px 6px;border-bottom:1px solid var(--line);cursor:pointer;transition:background-color .22s ease,border-radius .22s ease,border-color .22s ease}
 .row:last-child{border-bottom:0}
 .row .ti-chevron-right{transition:transform .15s}
 .row.open{background:var(--chip);border-radius:10px 10px 0 0;border-bottom-color:transparent}
@@ -210,7 +210,28 @@ const S = {master:'', codes:[]};
 let db=null, auth=null, unsubCodes=null, unsubMaster=null;
 
 const $=i=>document.getElementById(i);
-const show=(el,on)=>$(el).classList.toggle('hide',!on);
+/* ---------- smooth open/close ---------- */
+const REDUCE=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NOANIM=new Set(['appView','loginView','hdrSub','demoBanner']);
+function animH(el,on,done){
+  if(el._a){el._a.cancel();el._a=null}
+  el.style.overflow='';
+  if(REDUCE||!el.animate||!el.isConnected||!el.offsetParent&&!on){done&&done();return}
+  const cs=getComputedStyle(el);
+  const full={height:el.offsetHeight+'px',paddingTop:cs.paddingTop,paddingBottom:cs.paddingBottom,marginTop:cs.marginTop,marginBottom:cs.marginBottom,borderTopWidth:cs.borderTopWidth,borderBottomWidth:cs.borderBottomWidth,opacity:1};
+  const zero={height:'0px',paddingTop:'0px',paddingBottom:'0px',marginTop:'0px',marginBottom:'0px',borderTopWidth:'0px',borderBottomWidth:'0px',opacity:0};
+  el.style.overflow='hidden';
+  const a=el.animate(on?[zero,full]:[full,zero],{duration:on?260:200,easing:on?'cubic-bezier(.2,.8,.2,1)':'cubic-bezier(.4,0,.7,.2)'});
+  el._a=a;a.onfinish=()=>{el._a=null;el.style.overflow='';done&&done()};
+}
+function shown(el){el=typeof el==='string'?$(el):el;return el._t!==undefined?el._t:!el.classList.contains('hide')}
+function show(id,on){
+  const el=typeof id==='string'?$(id):id;on=!!on;
+  if(NOANIM.has(el.id)){el._t=on;el.classList.toggle('hide',!on);return}
+  if(shown(el)===on)return;el._t=on;
+  if(on){el.classList.remove('hide');animH(el,true)}
+  else animH(el,false,()=>{if(el._t===false)el.classList.add('hide')});
+}
 const ok5=s=>/^[0-8]{5}$/.test(s);
 const dg=(v,n)=>{v=v.replace(/\D/g,'');return n?v.slice(0,n):v};
 const cl=v=>v.toUpperCase().replace(/[^A-Z0-9]/g,'');
@@ -298,9 +319,27 @@ function chart(x){
   <div class="rh">Master</div>${p.map(v=>v===null?'<div class="pm none">–</div>':`<div class="pm">${v}</div>`).join('')}</div>
   <div class="grid" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)"><div class="rh">Change key</div>${x.cuts.split('').map(v=>`<div class="k">${v}</div>`).join('')}<div class="rh">Master key</div>${m.split('').map(v=>`<div class="k">${v}</div>`).join('')}</div>`;
 }
-function openDet(c,scroll){const x=find(c);if(!x)return;cur=c;$('ed').value=x.cuts;show('edErr',false);show('delYes',false);chart(x);renderList();
-  if(scroll){const r=$('list').querySelector(`.row[data-c="${c}"]`);if(r)r.scrollIntoView({behavior:'smooth',block:'start'})}}
-function closeDet(){cur=null;renderList()}
+const rowEl=c=>$('list').querySelector(`.row[data-c="${c}"]`);
+function openDet(c,scroll){
+  const x=find(c);if(!x)return;
+  if(!rowEl(c))return;
+  const det=$('det'),prev=cur,prevRow=prev&&prev!==c?rowEl(prev):null;
+  if(prevRow&&det.parentNode===$('list')){
+    const ghost=det.cloneNode(true);ghost.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));ghost.removeAttribute('id');
+    prevRow.after(ghost);prevRow.classList.remove('open');animH(ghost,false,()=>ghost.remove());
+  }
+  const r=rowEl(c);
+  if(prev===c&&det.parentNode===$('list')&&!det._a){if(scroll)r.scrollIntoView({behavior:'smooth',block:'nearest'});return}
+  cur=c;$('ed').value=x.cuts;['edErr','delYes'].forEach(i=>{$(i)._t=false;$(i).classList.add('hide')});chart(x);
+  r.classList.add('open');r.after(det);animH(det,true);
+  if(scroll)setTimeout(()=>r.scrollIntoView({behavior:'smooth',block:'nearest'}),40);
+}
+function closeDet(after){
+  const det=$('det'),r=cur&&rowEl(cur);cur=null;
+  if(r)r.classList.remove('open');
+  if(det.parentNode!==$('list')){after&&after();return}
+  animH(det,false,()=>{if(!cur)$('detHome').appendChild(det);after&&after()});
+}
 function setKb(l,refocus=true){
   letters=l;const c=$('code');
   c.setAttribute('inputmode',l?'text':'numeric');
@@ -325,8 +364,8 @@ $('list').addEventListener('click',e=>{const r=e.target.closest('.row');if(!r)re
 $('ed').addEventListener('input',e=>{e.target.value=dg(e.target.value,5);const er=cutErr(e.target.value);$('edErr').textContent=er;show('edErr',!!er)});
 $('edSave').addEventListener('click',async()=>{const v=$('ed').value;if(!ok5(v)){$('edErr').textContent='Enter 5 cuts, each 0 to 8.';show('edErr',true);return}try{await store.setCuts(cur,v)}catch(e){fail(e)}});
 $('del').addEventListener('click',()=>show('delYes',true));
-$('delYes').addEventListener('click',async()=>{const c=cur;closeDet();try{await store.delCode(c)}catch(e){fail(e)}});
-$('mkBtn').addEventListener('click',()=>{$('mkIn').value=S.master;show('mkErr',false);$('mkBox').classList.toggle('hide')});
+$('delYes').addEventListener('click',()=>{const c=cur;closeDet(async()=>{try{await store.delCode(c)}catch(e){fail(e)}})});
+$('mkBtn').addEventListener('click',()=>{$('mkIn').value=S.master;show('mkErr',false);show('mkBox',!shown('mkBox'))});
 $('mkIn').addEventListener('input',e=>{e.target.value=dg(e.target.value,5);show('mkErr',false)});
 $('mkSave').addEventListener('click',async()=>{const v=$('mkIn').value;if(!ok5(v)){$('mkErr').textContent='Enter 5 cuts, each 0 to 8.';show('mkErr',true);return}try{await store.setMaster(v);show('mkBox',false)}catch(e){fail(e)}});
 $('exportBtn').addEventListener('click',()=>{
