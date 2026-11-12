@@ -78,6 +78,9 @@ input:focus{border-color:var(--blue2)}
 .legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:10px}
 .sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
 
+textarea{width:100%;font:15px/1.5 ui-monospace,Menlo,monospace;color:var(--text);background:var(--soft);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;outline:none;resize:vertical;text-transform:uppercase}
+textarea:focus{border-color:var(--blue2)}
+.implist{font-size:13px;margin:4px 0 0 26px;padding:0;color:inherit}
 .login{max-width:420px;margin:0 auto}
 .banner{background:var(--warnBg);color:var(--warn);border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px;display:flex;gap:8px}
 .sync{font-size:12px;color:#B5D4F4;display:inline-flex;align-items:center;gap:4px}
@@ -126,6 +129,11 @@ input:focus{border-color:var(--blue2)}
       <div class="lab" style="margin-top:18px">Backup</div>
       <button class="btn" id="exportBtn"><i class="ti ti-download"></i>Export all codes</button>
       <div class="hint">Saves a file of every code and the master key. Keep it somewhere safe.</div>
+      <div class="lab" style="margin-top:18px">Bulk import</div>
+      <textarea id="impIn" rows="6" placeholder="One code per line, then its 5 cuts&#10;1234  15026&#10;5678  13442" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"></textarea>
+      <div id="impSum" class="hide"></div>
+      <button class="btn" id="impCheck"><i class="ti ti-list-check"></i>Check list</button>
+      <button class="btn pri hide" id="impGo"></button>
     </div>
 
     <div class="msg wa hide" id="noMaster" style="margin:0 0 12px"><i class="ti ti-alert-triangle"></i><span>Set the master key first so pinning can be worked out.</span></div>
@@ -223,6 +231,14 @@ const store = {
     if(DEMO){S.codes=S.codes.filter(x=>x.code!==code);render();return}
     await db.collection('keycodes').doc(code).delete();
   },
+  async addMany(list){
+    if(DEMO){list.forEach(x=>S.codes.push({code:x.code,cuts:x.cuts}));render();return}
+    for(let i=0;i<list.length;i+=400){
+      const b=db.batch();
+      list.slice(i,i+400).forEach(x=>b.set(db.collection('keycodes').doc(x.code),{cuts:x.cuts,updated:firebase.firestore.FieldValue.serverTimestamp()}));
+      await b.commit();
+    }
+  },
   async setMaster(cuts){
     if(DEMO){S.master=cuts;render();return}
     await db.collection('settings').doc('master').set({cuts,updated:firebase.firestore.FieldValue.serverTimestamp()});
@@ -312,6 +328,46 @@ $('exportBtn').addEventListener('click',()=>{
   const data={exported:new Date().toISOString(),master:S.master,codes:[...S.codes].sort(sortFn)};
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,1)],{type:'application/json'}));
   a.download='gainsborough-key-codes-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();
+});
+
+/* ---------- bulk import ---------- */
+let impReady=[];
+function parseImport(text){
+  const out={add:[],same:[],clash:[],dupe:[],bad:[],odd:[]};const seen={};
+  text.split(/\r?\n/).forEach(raw=>{
+    const line=raw.trim();if(!line)return;
+    const parts=line.split(/[\s,;:]+/).filter(Boolean);
+    const code=parts.length>=2?cl(parts[0]):'',cuts=parts.length>=2?parts[parts.length-1].replace(/\D/g,''):'';
+    if(!code||!ok5(cuts)||parts.length>2){out.bad.push(line);return}
+    if(seen[code]){if(seen[code]===cuts)out.dupe.push(code);else out.bad.push(line+' (listed twice with different cuts)');return}
+    seen[code]=cuts;
+    const ex=find(code);
+    if(ex){ex.cuts===cuts?out.same.push(code):out.clash.push(code+' (on file as '+ex.cuts+', list says '+cuts+')');return}
+    out.add.push({code,cuts});if(cuts[0]!=='1')out.odd.push(code+' '+cuts);
+  });
+  return out;
+}
+function impBlock(cls,icon,title,items){
+  return `<div class="msg ${cls}" style="display:block"><div style="display:flex;gap:8px"><i class="ti ${icon}"></i><b>${title}</b></div>${items&&items.length?`<ul class="implist">${items.map(t=>`<li>${t}</li>`).join('')}</ul>`:''}</div>`;
+}
+$('impIn').addEventListener('input',()=>{show('impSum',false);show('impGo',false)});
+$('impCheck').addEventListener('click',()=>{
+  const r=parseImport($('impIn').value.toUpperCase());impReady=r.add;
+  let h='';
+  h+=impBlock(r.add.length?'ok':'wa',r.add.length?'ti-circle-check':'ti-info-circle',r.add.length?`${r.add.length} new code${r.add.length===1?'':'s'} ready to add`:'No new codes to add');
+  if(r.odd.length)h+=impBlock('wa','ti-alert-triangle','Chamber 1 is not a 1 on these. Check them, they will still be added:',r.odd);
+  if(r.same.length)h+=impBlock('wa','ti-copy','Already on file, skipped:',r.same);
+  if(r.dupe.length)h+=impBlock('wa','ti-copy','Listed twice, added once:',r.dupe);
+  if(r.clash.length)h+=impBlock('er','ti-alert-octagon','On file with different cuts, skipped. Fix these by hand:',r.clash);
+  if(r.bad.length)h+=impBlock('er','ti-x','Could not read these lines, skipped:',r.bad);
+  $('impSum').innerHTML=h;show('impSum',true);
+  $('impGo').innerHTML=`<i class="ti ti-upload"></i>Add ${r.add.length} code${r.add.length===1?'':'s'}`;show('impGo',r.add.length>0);
+});
+$('impGo').addEventListener('click',async()=>{
+  if(!impReady.length)return;const b=$('impGo');b.disabled=true;
+  try{const n=impReady.length;await store.addMany(impReady);impReady=[];$('impIn').value='';show('impGo',false);
+    $('impSum').innerHTML=impBlock('ok','ti-circle-check',`Added ${n} code${n===1?'':'s'}`);
+  }catch(e){fail(e)}finally{b.disabled=false}
 });
 
 /* ---------- login ---------- */
