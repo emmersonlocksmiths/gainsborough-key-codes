@@ -76,14 +76,13 @@ input:focus{border-color:var(--blue2)}
 .cuts{display:flex;align-items:center;gap:8px;color:var(--muted);letter-spacing:4px;font-variant-numeric:tabular-nums}
 .empty{color:var(--muted);text-align:center;padding:16px 0;font-size:14px}
 
-.grid{display:grid;grid-template-columns:70px repeat(5,minmax(0,1fr));gap:5px;text-align:center;align-items:center;font-variant-numeric:tabular-nums}
-.pb{background:var(--blue);color:#fff;border-radius:10px;padding:8px 0;font-size:26px;font-weight:700}
-.pm{background:var(--amber);color:var(--amberText);border-radius:10px;padding:8px 0;font-size:23px;font-weight:500}
-.pm.none{background:var(--soft);color:var(--faint)}
+.grid{display:grid;grid-template-columns:90px repeat(5,minmax(0,1fr));column-gap:4px;row-gap:0;text-align:center;align-items:center;font-variant-numeric:tabular-nums}
+.pb{font-size:34px;line-height:1.05;font-weight:700;color:var(--text)}
+.pm{font-size:30px;line-height:1.05;font-weight:500;color:var(--text)}
+.pm.none{color:var(--faint)}
+.keys{margin-top:10px;padding-top:8px;border-top:1px solid var(--line);row-gap:2px}
 .k{color:var(--muted);font-size:16px;font-weight:600}
 .rh{text-align:left;font-size:14px;font-weight:600;color:var(--muted)}
-.legend{display:flex;gap:14px;font-size:14px;color:var(--muted);margin-top:10px}
-.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
 
 textarea{width:100%;font:600 18px/1.45 "Rajdhani",ui-monospace,Menlo,monospace;letter-spacing:1px;color:var(--text);background:var(--soft);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;outline:none;resize:vertical;text-transform:uppercase}
 textarea:focus{border-color:var(--blue2)}
@@ -155,7 +154,8 @@ textarea:focus{border-color:var(--blue2)}
 
       <div id="found" class="hide">
         <div class="msg ok"><i class="ti ti-circle-check"></i><span id="foundMsg"></span></div>
-        <button class="btn pri" id="foundPin"><i class="ti ti-list-numbers"></i>Pinning</button>
+        <div class="two"><button class="btn pri" id="foundPin" style="flex:2"><i class="ti ti-list-numbers"></i>Pinning</button><button class="btn danger" id="del"><i class="ti ti-trash"></i>Delete</button></div>
+        <button class="btn danger hide" id="delYes"></button>
       </div>
 
       <div id="nw" class="hide">
@@ -171,12 +171,6 @@ textarea:focus{border-color:var(--blue2)}
     <div id="detHome" class="hide">
     <div id="det">
       <div id="chart"></div>
-      <div class="legend"><span><span class="sw" style="background:var(--blue)"></span>Bottom pin</span><span><span class="sw" style="background:var(--amber)"></span>Master pin</span></div>
-      <div class="lab">Change key cuts</div>
-      <input id="ed" class="mid" inputmode="numeric" maxlength="5" autocomplete="off">
-      <div class="msg er hide" id="edErr"></div>
-      <div class="two"><button class="btn" id="edSave">Save cuts</button><button class="btn danger" id="del"><i class="ti ti-trash"></i>Delete</button></div>
-      <button class="btn danger hide" id="delYes">Tap again to confirm delete</button>
     </div>
     </div>
 
@@ -320,7 +314,7 @@ function chart(x){
   $('chart').innerHTML=`<div class="grid"><div></div>${[1,2,3,4,5].map(n=>`<div class="k" style="font-size:14px">${n}</div>`).join('')}
   <div class="rh">Bottom</div>${b.map(v=>`<div class="pb">${v}</div>`).join('')}
   <div class="rh">Master</div>${p.map(v=>v===null?'<div class="pm none">–</div>':`<div class="pm">${v}</div>`).join('')}</div>
-  <div class="grid" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)"><div class="rh">Change key</div>${x.cuts.split('').map(v=>`<div class="k">${v}</div>`).join('')}<div class="rh">Master key</div>${m.split('').map(v=>`<div class="k">${v}</div>`).join('')}</div>`;
+  <div class="grid keys"><div class="rh">Change key</div>${x.cuts.split('').map(v=>`<div class="k">${v}</div>`).join('')}<div class="rh">Master key</div>${m.split('').map(v=>`<div class="k">${v}</div>`).join('')}</div>`;
 }
 const rowEl=c=>$('list').querySelector(`.row[data-c="${c}"]`);
 function openDet(c,scroll){
@@ -333,7 +327,7 @@ function openDet(c,scroll){
   }
   const r=rowEl(c);
   if(prev===c&&det.parentNode===$('list')&&!det._a){if(scroll)r.scrollIntoView({behavior:'smooth',block:'nearest'});return}
-  cur=c;$('ed').value=x.cuts;['edErr','delYes'].forEach(i=>{$(i)._t=false;$(i).classList.add('hide')});chart(x);
+  cur=c;chart(x);
   r.classList.add('open');r.after(det);animH(det,true);
   if(scroll)setTimeout(()=>r.scrollIntoView({behavior:'smooth',block:'nearest'}),40);
 }
@@ -353,7 +347,7 @@ function setKb(l,refocus=true){
 
 /* ---------- events ---------- */
 $('kbBtn').addEventListener('click',()=>setKb(!letters));
-$('code').addEventListener('input',e=>{e.target.value=cl(e.target.value);$('cuts').value='';show('same',false);show('cutErr',false);renderEntry();renderList()});
+$('code').addEventListener('input',e=>{e.target.value=cl(e.target.value);$('cuts').value='';const dy=$('delYes');dy._t=false;dy.classList.add('hide');show('same',false);show('cutErr',false);renderEntry();renderList()});
 $('cuts').addEventListener('input',e=>{e.target.value=dg(e.target.value,5);checkNew()});
 $('save').addEventListener('click',async()=>{
   const c=$('code').value,v=$('cuts').value;
@@ -364,10 +358,9 @@ $('save').addEventListener('click',async()=>{
 });
 $('foundPin').addEventListener('click',()=>openDet($('code').value,true));
 $('list').addEventListener('click',e=>{const r=e.target.closest('.row');if(!r)return;r.dataset.c===cur?closeDet():openDet(r.dataset.c)});
-$('ed').addEventListener('input',e=>{e.target.value=dg(e.target.value,5);const er=cutErr(e.target.value);$('edErr').textContent=er;show('edErr',!!er)});
-$('edSave').addEventListener('click',async()=>{const v=$('ed').value;if(!ok5(v)){$('edErr').textContent='Enter 5 cuts, each 0 to 8.';show('edErr',true);return}try{await store.setCuts(cur,v)}catch(e){fail(e)}});
-$('del').addEventListener('click',()=>show('delYes',true));
-$('delYes').addEventListener('click',()=>{const c=cur;closeDet(async()=>{try{await store.delCode(c)}catch(e){fail(e)}})});
+$('del').addEventListener('click',()=>{$('delYes').innerHTML='<i class="ti ti-alert-triangle"></i>Tap again to delete '+$('code').value;show('delYes',!shown('delYes'))});
+$('delYes').addEventListener('click',()=>{const c=$('code').value;if(!find(c))return;show('delYes',false);
+  const go=async()=>{try{await store.delCode(c)}catch(e){fail(e)}};cur===c?closeDet(go):go()});
 $('mkBtn').addEventListener('click',()=>{$('mkIn').value=S.master;show('mkErr',false);show('mkBox',!shown('mkBox'))});
 $('mkIn').addEventListener('input',e=>{e.target.value=dg(e.target.value,5);show('mkErr',false)});
 $('mkSave').addEventListener('click',async()=>{const v=$('mkIn').value;if(!ok5(v)){$('mkErr').textContent='Enter 5 cuts, each 0 to 8.';show('mkErr',true);return}try{await store.setMaster(v);show('mkBox',false)}catch(e){fail(e)}});
