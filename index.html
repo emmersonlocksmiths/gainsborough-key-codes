@@ -65,6 +65,10 @@ input:focus{border-color:var(--blue2)}
 
 .row{display:flex;justify-content:space-between;align-items:center;padding:11px 6px;border-bottom:1px solid var(--line);cursor:pointer}
 .row:last-child{border-bottom:0}
+.row .ti-chevron-right{transition:transform .15s}
+.row.open{background:var(--chip);border-radius:10px 10px 0 0;border-bottom-color:transparent}
+.row.open .ti-chevron-right{transform:rotate(90deg)}
+#det{background:var(--soft);border:2px solid var(--chip);border-top:0;border-radius:0 0 12px 12px;padding:14px 12px 12px;margin-bottom:8px}
 .chip{background:var(--chip);color:var(--chipText);border-radius:8px;padding:3px 10px;font-weight:600;font-size:17px;letter-spacing:2px;font-variant-numeric:tabular-nums;word-break:break-all}
 .cuts{display:flex;align-items:center;gap:8px;color:var(--muted);letter-spacing:4px;font-variant-numeric:tabular-nums}
 .empty{color:var(--muted);text-align:center;padding:16px 0;font-size:14px}
@@ -161,19 +165,16 @@ textarea:focus{border-color:var(--blue2)}
       </div>
     </div>
 
-    <div class="card hide" id="det" style="border:2px solid var(--blue2)">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-        <span class="chip" style="font-size:24px;padding:4px 14px" id="dCode"></span>
-        <span style="font-size:12px;color:var(--muted);white-space:nowrap">TE2 · 5 pin</span>
-      </div>
-      <div id="chart" style="margin-top:14px"></div>
+    <div id="detHome" class="hide">
+    <div id="det">
+      <div id="chart"></div>
       <div class="legend"><span><span class="sw" style="background:var(--blue)"></span>Bottom pin</span><span><span class="sw" style="background:var(--amber)"></span>Master pin</span></div>
       <div class="lab">Change key cuts</div>
       <input id="ed" class="mid" inputmode="numeric" maxlength="5" autocomplete="off">
       <div class="msg er hide" id="edErr"></div>
       <div class="two"><button class="btn" id="edSave">Save cuts</button><button class="btn danger" id="del"><i class="ti ti-trash"></i>Delete</button></div>
       <button class="btn danger hide" id="delYes">Tap again to confirm delete</button>
-      <button class="btn" id="closeDet">Close</button>
+    </div>
     </div>
 
     <div class="card">
@@ -260,15 +261,18 @@ function stopListening(){unsubCodes&&unsubCodes();unsubMaster&&unsubMaster();uns
 /* ---------- views ---------- */
 function showApp(on){show('appView',on);show('hdrSub',on);show('loginView',!on)}
 
-function render(){renderList();renderEntry();show('noMaster',!ok5(S.master));if(cur&&!$('det').classList.contains('hide')){const x=find(cur);x?chart(x):show('det',false)}}
+function render(){if(cur&&!find(cur))cur=null;renderList();renderEntry();show('noMaster',!ok5(S.master));if(cur)chart(find(cur))}
 function renderList(){
   const q=$('code').value,all=[...S.codes].sort(sortFn);
   const items=q?all.filter(x=>x.code.startsWith(q)):all;
   $('cnt').textContent=S.codes.length+(S.codes.length===1?' code':' codes')+' on file';
   $('lt').textContent=q?'Codes starting '+q:'All codes';
-  $('list').innerHTML=items.map(x=>`<div class="row" data-c="${x.code}"><span class="chip">${x.code}</span><span class="cuts">${x.cuts}<i class="ti ti-chevron-right" style="letter-spacing:0"></i></span></div>`).join('');
+  $('detHome').appendChild($('det'));
+  if(cur&&!items.some(x=>x.code===cur))cur=null;
+  $('list').innerHTML=items.map(x=>`<div class="row${x.code===cur?' open':''}" data-c="${x.code}"><span class="chip">${x.code}</span><span class="cuts">${x.cuts}<i class="ti ti-chevron-right" style="letter-spacing:0"></i></span></div>`).join('');
   $('empty').textContent=S.codes.length?'No codes match.':'No codes yet. Type one above to add it.';
   show('empty',!items.length);
+  if(cur){const r=$('list').querySelector(`.row[data-c="${cur}"]`);if(r)r.after($('det'))}
 }
 function renderEntry(){
   const q=$('code').value,h=q?find(q):null;
@@ -294,7 +298,9 @@ function chart(x){
   <div class="rh">Master</div>${p.map(v=>v===null?'<div class="pm none">–</div>':`<div class="pm">${v}</div>`).join('')}</div>
   <div class="grid" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)"><div class="rh">Change key</div>${x.cuts.split('').map(v=>`<div class="k">${v}</div>`).join('')}<div class="rh">Master key</div>${m.split('').map(v=>`<div class="k">${v}</div>`).join('')}</div>`;
 }
-function openDet(c){const x=find(c);if(!x)return;cur=c;$('dCode').textContent=c;$('ed').value=x.cuts;show('edErr',false);show('delYes',false);chart(x);show('det',true);$('det').scrollIntoView({behavior:'smooth',block:'nearest'})}
+function openDet(c,scroll){const x=find(c);if(!x)return;cur=c;$('ed').value=x.cuts;show('edErr',false);show('delYes',false);chart(x);renderList();
+  if(scroll){const r=$('list').querySelector(`.row[data-c="${c}"]`);if(r)r.scrollIntoView({behavior:'smooth',block:'start'})}}
+function closeDet(){cur=null;renderList()}
 function setKb(l,refocus=true){
   letters=l;const c=$('code');
   c.setAttribute('inputmode',l?'text':'numeric');
@@ -312,15 +318,14 @@ $('save').addEventListener('click',async()=>{
   if(!c||find(c))return;
   if(!ok5(v)){$('cutErr').textContent='Enter 5 cuts, each 0 to 8.';show('cutErr',true);return}
   const b=$('save');b.disabled=true;
-  try{await store.addCode(c,v);$('cuts').value='';if(letters)setKb(false,false);render();openDet(c)}catch(e){fail(e)}finally{b.disabled=false}
+  try{await store.addCode(c,v);$('cuts').value='';if(letters)setKb(false,false);render();openDet(c,true)}catch(e){fail(e)}finally{b.disabled=false}
 });
-$('foundPin').addEventListener('click',()=>openDet($('code').value));
-$('list').addEventListener('click',e=>{const r=e.target.closest('.row');if(r)openDet(r.dataset.c)});
+$('foundPin').addEventListener('click',()=>openDet($('code').value,true));
+$('list').addEventListener('click',e=>{const r=e.target.closest('.row');if(!r)return;r.dataset.c===cur?closeDet():openDet(r.dataset.c)});
 $('ed').addEventListener('input',e=>{e.target.value=dg(e.target.value,5);const er=cutErr(e.target.value);$('edErr').textContent=er;show('edErr',!!er)});
 $('edSave').addEventListener('click',async()=>{const v=$('ed').value;if(!ok5(v)){$('edErr').textContent='Enter 5 cuts, each 0 to 8.';show('edErr',true);return}try{await store.setCuts(cur,v)}catch(e){fail(e)}});
 $('del').addEventListener('click',()=>show('delYes',true));
-$('delYes').addEventListener('click',async()=>{const c=cur;show('det',false);cur=null;try{await store.delCode(c)}catch(e){fail(e)}});
-$('closeDet').addEventListener('click',()=>{show('det',false);cur=null});
+$('delYes').addEventListener('click',async()=>{const c=cur;closeDet();try{await store.delCode(c)}catch(e){fail(e)}});
 $('mkBtn').addEventListener('click',()=>{$('mkIn').value=S.master;show('mkErr',false);$('mkBox').classList.toggle('hide')});
 $('mkIn').addEventListener('input',e=>{e.target.value=dg(e.target.value,5);show('mkErr',false)});
 $('mkSave').addEventListener('click',async()=>{const v=$('mkIn').value;if(!ok5(v)){$('mkErr').textContent='Enter 5 cuts, each 0 to 8.';show('mkErr',true);return}try{await store.setMaster(v);show('mkBox',false)}catch(e){fail(e)}});
@@ -394,7 +399,7 @@ if(DEMO){
   db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
   auth.onAuthStateChanged(u=>{
     if(u){showApp(true);startListening()}
-    else{stopListening();cur=null;show('det',false);showApp(false);render()}
+    else{stopListening();cur=null;showApp(false);render()}
   });
 }
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
