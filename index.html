@@ -54,7 +54,8 @@ input:focus{border-color:var(--blue2)}
 .big{flex:1;min-width:0;height:60px;font-size:28px;letter-spacing:6px;text-align:center;font-variant-numeric:tabular-nums;border:2px solid var(--blue2);border-radius:12px;text-transform:uppercase}
 .mid{width:100%;height:48px;font-size:22px;letter-spacing:8px;text-align:center;font-variant-numeric:tabular-nums;border-radius:10px}
 .txt{width:100%;height:48px;font-size:16px;padding:0 12px;border-radius:10px}
-.kb{width:64px;height:60px;border-radius:12px;background:var(--chip);color:var(--chipText);border:0;font-weight:600;font-size:15px;flex:none}
+.kbrow{display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:8px;font-size:14px;color:var(--faint)}
+.kbpill{height:34px;padding:0 12px;border-radius:17px;background:var(--chip);color:var(--chipText);border:0;font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:5px;flex:none}
 .hint{font-size:14px;color:var(--faint);margin-top:6px}
 .msg{border-radius:10px;padding:10px 12px;font-size:16px;margin-top:10px;display:flex;gap:8px;align-items:flex-start}
 .msg i{font-size:18px;flex:none}
@@ -151,11 +152,8 @@ textarea::placeholder{text-transform:none;letter-spacing:0}
 
       <div class="card">
         <div class="seg" role="tablist"><button class="on" data-mode="code">Search by code</button><button data-mode="cuts">Search by cuts</button></div>
-        <div style="display:flex;gap:8px">
-          <input id="code" class="big" inputmode="numeric" placeholder="Code" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
-          <button id="kbBtn" class="kb" aria-label="Switch keyboard">ABC</button>
-        </div>
-        <div class="hint" id="kbHint">Tap ABC if the code has letters</div>
+        <input id="code" class="big" style="width:100%" inputmode="numeric" placeholder="Code" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+        <div class="kbrow" id="kbRow"><span id="kbHint">Code has letters?</span><button id="kbBtn" class="kbpill" aria-label="Switch keyboard"><i class="ti ti-abc"></i>ABC keyboard</button></div>
 
         <div id="found" class="hide">
           <div class="msg ok"><i class="ti ti-circle-check"></i><span id="foundMsg"></span></div>
@@ -406,8 +404,8 @@ function closeDet(after){
 function setKb(l,refocus=true){
   letters=l;const c=$('code');
   c.setAttribute('inputmode',l?'text':'numeric');
-  $('kbBtn').textContent=l?'123':'ABC';
-  $('kbHint').textContent=l?'Letter keyboard on. Tap 123 to go back to numbers':'Tap ABC if the code has letters';
+  $('kbBtn').innerHTML=l?'<i class="ti ti-123"></i>Number keypad':'<i class="ti ti-abc"></i>ABC keyboard';
+  $('kbHint').textContent=l?'Letter keyboard on':'Code has letters?';
   if(refocus){c.blur();setTimeout(()=>c.focus(),30)}
 }
 
@@ -444,8 +442,8 @@ function setMode(m){
   if(m===mode)return;mode=m;
   document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.mode===m));
   const c=$('code');c.value='';$('cuts').value='';
-  if(m==='cuts'){c.setAttribute('inputmode','numeric');c.placeholder='Cuts';c.maxLength=5;show('kbBtn',false);show('kbHint',false);if(letters){letters=false;$('kbBtn').textContent='ABC';$('kbHint').textContent='Tap ABC if the code has letters'}}
-  else{c.placeholder='Code';c.removeAttribute('maxlength');show('kbBtn',true);show('kbHint',true)}
+  if(m==='cuts'){c.setAttribute('inputmode','numeric');c.placeholder='Cuts';c.maxLength=5;show('kbRow',false);if(letters)setKb(false,false)}
+  else{c.placeholder='Code';c.removeAttribute('maxlength');show('kbRow',true)}
   const dy=$('delYes');dy._t=false;dy.classList.add('hide');
   renderEntry();renderList();c.focus();
 }
