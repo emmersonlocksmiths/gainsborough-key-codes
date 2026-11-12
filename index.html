@@ -12,6 +12,9 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
 :root{
@@ -28,7 +31,7 @@
   }
 }
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font:500 17px/1.35 "Rajdhani",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
 .wrap{max-width:560px;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) 16px calc(32px + env(safe-area-inset-bottom))}
 .hide{display:none!important}
 button{font:inherit;cursor:pointer}
@@ -38,9 +41,9 @@ input:focus{border-color:var(--blue2)}
 .hdr{background:var(--navy);border-radius:18px;padding:18px 16px 16px;color:#fff;margin-bottom:14px}
 .hdr .logo{display:block;width:100%;max-width:420px;margin:0 auto;height:auto}
 .hdr .bar{margin-top:16px;padding-top:14px;border-top:1px solid rgba(133,183,235,.45)}
-.hdr h1{font-size:21px;font-weight:600;line-height:1.25;margin:0;display:flex;gap:8px;align-items:flex-start}
+.hdr h1{font-size:24px;font-weight:700;line-height:1.25;margin:0;display:flex;gap:8px;align-items:flex-start}
 .hdr .sub{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px}
-.hdr .cnt{font-size:13px;color:#B5D4F4}
+.hdr .cnt{font-size:15px;color:#B5D4F4}
 .hbtns{display:flex;gap:6px}
 .hbtn{height:36px;padding:0 12px;border-radius:10px;border:0;background:#fff;color:var(--navy);font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:5px}
 .hbtn.ghost{background:rgba(255,255,255,.14);color:#fff}
@@ -48,13 +51,13 @@ input:focus{border-color:var(--blue2)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
 .cardt{display:flex;align-items:center;gap:8px;font-weight:600;font-size:15px;margin-bottom:8px}
 .ic{width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:16px;flex:none}
-.lab{font-size:13px;color:var(--muted);margin:12px 0 6px}
+.lab{font-size:15px;font-weight:600;color:var(--muted);margin:12px 0 6px}
 .big{flex:1;min-width:0;height:60px;font-size:28px;letter-spacing:6px;text-align:center;font-variant-numeric:tabular-nums;border:2px solid var(--blue2);border-radius:12px;text-transform:uppercase}
 .mid{width:100%;height:48px;font-size:22px;letter-spacing:8px;text-align:center;font-variant-numeric:tabular-nums;border-radius:10px}
 .txt{width:100%;height:48px;font-size:16px;padding:0 12px;border-radius:10px}
 .kb{width:64px;height:60px;border-radius:12px;background:var(--chip);color:var(--chipText);border:0;font-weight:600;font-size:15px;flex:none}
-.hint{font-size:12px;color:var(--faint);margin-top:6px}
-.msg{border-radius:10px;padding:10px 12px;font-size:14px;margin-top:10px;display:flex;gap:8px;align-items:flex-start}
+.hint{font-size:14px;color:var(--faint);margin-top:6px}
+.msg{border-radius:10px;padding:10px 12px;font-size:16px;margin-top:10px;display:flex;gap:8px;align-items:flex-start}
 .msg i{font-size:18px;flex:none}
 .ok{background:var(--okBg);color:var(--ok)}.wa{background:var(--warnBg);color:var(--warn)}.er{background:var(--badBg);color:var(--bad)}
 .btn{width:100%;margin-top:10px;height:46px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px}
@@ -69,25 +72,25 @@ input:focus{border-color:var(--blue2)}
 .row.open{background:var(--chip);border-radius:10px 10px 0 0;border-bottom-color:transparent}
 .row.open .ti-chevron-right{transform:rotate(90deg)}
 #det{background:var(--soft);border:2px solid var(--chip);border-top:0;border-radius:0 0 12px 12px;padding:14px 12px 12px;margin-bottom:8px}
-.chip{background:var(--chip);color:var(--chipText);border-radius:8px;padding:3px 10px;font-weight:600;font-size:17px;letter-spacing:2px;font-variant-numeric:tabular-nums;word-break:break-all}
+.chip{background:var(--chip);color:var(--chipText);border-radius:8px;padding:3px 10px;font-weight:700;font-size:20px;letter-spacing:2px;font-variant-numeric:tabular-nums;word-break:break-all}
 .cuts{display:flex;align-items:center;gap:8px;color:var(--muted);letter-spacing:4px;font-variant-numeric:tabular-nums}
 .empty{color:var(--muted);text-align:center;padding:16px 0;font-size:14px}
 
 .grid{display:grid;grid-template-columns:70px repeat(5,minmax(0,1fr));gap:5px;text-align:center;align-items:center;font-variant-numeric:tabular-nums}
-.pb{background:var(--blue);color:#fff;border-radius:10px;padding:9px 0;font-size:23px;font-weight:800}
-.pm{background:var(--amber);color:var(--amberText);border-radius:10px;padding:9px 0;font-size:20px;font-weight:400}
+.pb{background:var(--blue);color:#fff;border-radius:10px;padding:8px 0;font-size:26px;font-weight:700}
+.pm{background:var(--amber);color:var(--amberText);border-radius:10px;padding:8px 0;font-size:23px;font-weight:500}
 .pm.none{background:var(--soft);color:var(--faint)}
-.k{color:var(--muted);font-size:14px}
-.rh{text-align:left;font-size:12px;color:var(--muted)}
-.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:10px}
+.k{color:var(--muted);font-size:16px;font-weight:600}
+.rh{text-align:left;font-size:14px;font-weight:600;color:var(--muted)}
+.legend{display:flex;gap:14px;font-size:14px;color:var(--muted);margin-top:10px}
 .sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
 
-textarea{width:100%;font:15px/1.5 ui-monospace,Menlo,monospace;color:var(--text);background:var(--soft);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;outline:none;resize:vertical;text-transform:uppercase}
+textarea{width:100%;font:600 18px/1.45 "Rajdhani",ui-monospace,Menlo,monospace;letter-spacing:1px;color:var(--text);background:var(--soft);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;outline:none;resize:vertical;text-transform:uppercase}
 textarea:focus{border-color:var(--blue2)}
-.implist{font-size:13px;margin:4px 0 0 26px;padding:0;color:inherit}
+.implist{font-size:15px;margin:4px 0 0 26px;padding:0;color:inherit}
 .login{max-width:420px;margin:0 auto}
-.banner{background:var(--warnBg);color:var(--warn);border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px;display:flex;gap:8px}
-.sync{font-size:12px;color:#B5D4F4;display:inline-flex;align-items:center;gap:4px}
+.banner{background:var(--warnBg);color:var(--warn);border-radius:12px;padding:10px 12px;font-size:15px;margin-bottom:12px;display:flex;gap:8px}
+.sync{font-size:14px;color:#B5D4F4;display:inline-flex;align-items:center;gap:4px}
 </style>
 </head>
 <body>
@@ -180,7 +183,7 @@ textarea:focus{border-color:var(--blue2)}
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
         <span class="cardt" style="margin:0"><span class="ic" style="background:var(--okBg);color:var(--ok)"><i class="ti ti-list"></i></span><span id="lt">All codes</span></span>
-        <span style="font-size:12px;color:var(--muted)">tap for pinning</span>
+        <span style="font-size:14px;color:var(--muted)">tap for pinning</span>
       </div>
       <div id="list"></div>
       <div class="empty hide" id="empty"></div>
@@ -314,7 +317,7 @@ function chart(x){
   if(!ok5(m)){$('chart').innerHTML='<div class="msg wa"><i class="ti ti-alert-triangle"></i><span>Set the master key to see the pinning.</span></div>';return}
   const b=[],p=[];
   for(let i=0;i<5;i++){const c=+x.cuts[i],k=+m[i];b.push(Math.min(c,k));p.push(c===k?null:Math.abs(c-k))}
-  $('chart').innerHTML=`<div class="grid"><div></div>${[1,2,3,4,5].map(n=>`<div class="k" style="font-size:12px">${n}</div>`).join('')}
+  $('chart').innerHTML=`<div class="grid"><div></div>${[1,2,3,4,5].map(n=>`<div class="k" style="font-size:14px">${n}</div>`).join('')}
   <div class="rh">Bottom</div>${b.map(v=>`<div class="pb">${v}</div>`).join('')}
   <div class="rh">Master</div>${p.map(v=>v===null?'<div class="pm none">–</div>':`<div class="pm">${v}</div>`).join('')}</div>
   <div class="grid" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)"><div class="rh">Change key</div>${x.cuts.split('').map(v=>`<div class="k">${v}</div>`).join('')}<div class="rh">Master key</div>${m.split('').map(v=>`<div class="k">${v}</div>`).join('')}</div>`;
