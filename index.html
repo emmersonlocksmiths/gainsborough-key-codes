@@ -95,6 +95,7 @@ textarea:focus{border-color:var(--blue2)}
 textarea::placeholder{text-transform:none;letter-spacing:0}
 .implist{font-size:15px;margin:4px 0 0 26px;padding:0;color:inherit}
 .login{max-width:420px;margin:0 auto}
+.linkbtn{display:block;margin:12px auto 0;border:0;background:none;color:var(--blue2);font-weight:700;font-size:16px;padding:6px 10px}
 .tabs{display:flex;background:rgba(255,255,255,.14);border-radius:11px;padding:3px;gap:2px}
 .tabs button{border:0;background:transparent;color:#DCEBFB;font-weight:700;font-size:15px;height:32px;padding:0 14px;border-radius:9px;display:inline-flex;align-items:center;gap:5px;transition:background-color .2s,color .2s}
 .tabs button.on{background:#fff;color:var(--navy)}
@@ -143,7 +144,9 @@ textarea::placeholder{text-transform:none;letter-spacing:0}
       <div class="lab">Password</div>
       <input id="pw" class="txt" type="password" autocomplete="current-password">
       <div class="msg er hide" id="loginErr"></div>
+      <div class="msg ok hide" id="resetOk"><i class="ti ti-mail"></i><span id="resetOkTxt"></span></div>
       <button class="btn pri" id="loginBtn"><i class="ti ti-login"></i>Sign in</button>
+      <button class="linkbtn" id="forgotBtn">Forgot your password?</button>
     </div>
   </div>
 
@@ -231,6 +234,19 @@ textarea::placeholder{text-transform:none;letter-spacing:0}
       <div class="card">
         <div class="cardt"><span class="ic" style="background:var(--soft);color:var(--muted)"><i class="ti ti-user"></i></span>Account</div>
         <div class="acct"><span>Signed in as <b id="who"></b></span></div>
+        <button class="btn" id="cpwBtn"><i class="ti ti-key"></i>Change password</button>
+        <div id="cpwBox" class="hide">
+          <div class="lab">Current password</div>
+          <input id="cpwOld" class="txt" type="password" autocomplete="current-password">
+          <div class="lab">New password</div>
+          <input id="cpwNew" class="txt" type="password" autocomplete="new-password">
+          <div class="lab">New password again</div>
+          <input id="cpwNew2" class="txt" type="password" autocomplete="new-password">
+          <div class="hint">At least 8 characters.</div>
+          <div class="msg er hide" id="cpwErr"></div>
+          <button class="btn pri" id="cpwSave">Save new password</button>
+        </div>
+        <div class="msg ok hide" id="cpwOk"><i class="ti ti-circle-check"></i><span>Password changed</span></div>
         <button class="btn danger" id="outBtn"><i class="ti ti-logout"></i>Sign out</button>
       </div>
     </div>
@@ -440,7 +456,7 @@ function setTab(t){
   from._t=false;from.classList.add('hide');to._t=true;to.classList.remove('hide');
   if(!REDUCE&&to.animate)to.animate([{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'none'}],{duration:220,easing:'cubic-bezier(.2,.8,.2,1)'});
   window.scrollTo({top:0,behavior:'smooth'});
-  if(t==='settingsView'){$('mkIn').value=S.master;['mkErr','mkOk'].forEach(i=>{$(i)._t=false;$(i).classList.add('hide')})}
+  if(t==='settingsView'){$('mkIn').value=S.master;['mkErr','mkOk','cpwBox','cpwErr','cpwOk'].forEach(i=>{$(i)._t=false;$(i).classList.add('hide')});resetCpw()}
 }
 function setMode(m){
   if(m===mode)return;mode=m;
@@ -534,6 +550,40 @@ $('loginBtn').addEventListener('click',async()=>{
 });
 $('pw').addEventListener('keydown',e=>{if(e.key==='Enter')$('loginBtn').click()});
 $('outBtn').addEventListener('click',()=>{if(DEMO)return;if(confirm('Sign out?'))auth.signOut()});
+
+/* ---------- forgot / change password ---------- */
+$('forgotBtn').addEventListener('click',async()=>{
+  const em=$('email').value.trim();show('loginErr',false);show('resetOk',false);
+  if(!/^\S+@\S+\.\S+$/.test(em)){$('loginErr').textContent='Type your email above first, then tap Forgot your password.';show('loginErr',true);$('email').focus();return}
+  const b=$('forgotBtn');b.disabled=true;
+  try{
+    if(!DEMO)await auth.sendPasswordResetEmail(em);
+    $('resetOkTxt').textContent='If '+em+' has a login, a reset link is on its way. Check your inbox and junk folder.';show('resetOk',true);
+  }catch(e){
+    if(e.code==='auth/user-not-found'){$('resetOkTxt').textContent='If '+em+' has a login, a reset link is on its way. Check your inbox and junk folder.';show('resetOk',true)}
+    else{$('loginErr').textContent=e.code==='auth/network-request-failed'?'No connection. Check your signal and try again.':'Could not send the reset email ('+e.code+').';show('loginErr',true)}
+  }finally{b.disabled=false}
+});
+function resetCpw(){['cpwOld','cpwNew','cpwNew2'].forEach(i=>$(i).value='');show('cpwErr',false)}
+$('cpwBtn').addEventListener('click',()=>{show('cpwOk',false);const on=!shown('cpwBox');if(on)resetCpw();show('cpwBox',on);if(on)setTimeout(()=>$('cpwOld').focus(),280)});
+['cpwOld','cpwNew','cpwNew2'].forEach(i=>$(i).addEventListener('input',()=>show('cpwErr',false)));
+$('cpwSave').addEventListener('click',async()=>{
+  const o=$('cpwOld').value,n=$('cpwNew').value,n2=$('cpwNew2').value;
+  const err=t=>{$('cpwErr').textContent=t;show('cpwErr',true)};
+  if(!o)return err('Enter your current password.');
+  if(n.length<8)return err('New password needs at least 8 characters.');
+  if(n!==n2)return err("The two new passwords don't match.");
+  if(n===o)return err('New password is the same as the current one.');
+  const b=$('cpwSave');b.disabled=true;
+  try{
+    if(!DEMO){const u=auth.currentUser;
+      await u.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(u.email,o));
+      await u.updatePassword(n);}
+    resetCpw();show('cpwBox',false);show('cpwOk',true);
+  }catch(e){
+    err({'auth/wrong-password':'Current password is wrong.','auth/invalid-credential':'Current password is wrong.','auth/too-many-requests':'Too many tries. Wait a minute and try again.','auth/weak-password':'That new password is too weak. Try a longer one.','auth/network-request-failed':'No connection. Check your signal and try again.'}[e.code]||'Could not change password ('+e.code+').');
+  }finally{b.disabled=false}
+});
 
 /* ---------- start ---------- */
 if(DEMO){
