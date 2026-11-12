@@ -1,0 +1,12 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Only your own login can read or change the key codes.
+    // Replace the email below with the one you sign in with.
+    function isNathan() {
+      return request.auth != null && request.auth.token.email == 'YOUR-LOGIN-EMAIL@example.com';
+    }
+    match /keycodes/{code} { allow read, write: if isNathan(); }
+    match /settings/{doc}  { allow read, write: if isNathan(); }
+  }
+}

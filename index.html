@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0C447C">
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Key Codes">
+<title>Gainsborough Building Key Codes</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+:root{
+  --bg:#EEF2F7;--card:#FFFFFF;--soft:#F5F7FA;--text:#14181F;--muted:#5F6B7A;--faint:#9AA4B2;--line:#DCE2EA;
+  --navy:#0C447C;--blue:#185FA5;--blue2:#378ADD;--chip:#E6F1FB;--chipText:#0C447C;
+  --amber:#EF9F27;--amberText:#412402;
+  --okBg:#E7F5EC;--ok:#166534;--warnBg:#FDF3E2;--warn:#92510A;--badBg:#FDECEC;--bad:#B42318;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0D1117;--card:#161B22;--soft:#1F2630;--text:#E8ECF1;--muted:#9AA6B5;--faint:#6B7684;--line:#2A323D;
+    --chip:#14304F;--chipText:#BFDCF8;
+    --okBg:#10261A;--ok:#6EE7A0;--warnBg:#2A2010;--warn:#FBC46A;--badBg:#2C1414;--bad:#F99B94;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:560px;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) 16px calc(32px + env(safe-area-inset-bottom))}
+.hide{display:none!important}
+button{font:inherit;cursor:pointer}
+input{font:inherit;color:var(--text);background:var(--soft);border:1.5px solid var(--line);outline:none}
+input:focus{border-color:var(--blue2)}
+
+.hdr{background:var(--navy);border-radius:18px;padding:18px 16px 16px;color:#fff;margin-bottom:14px}
+.hdr .logo{display:block;width:100%;max-width:420px;margin:0 auto;height:auto}
+.hdr .bar{margin-top:16px;padding-top:14px;border-top:1px solid rgba(133,183,235,.45)}
+.hdr h1{font-size:21px;font-weight:600;line-height:1.25;margin:0;display:flex;gap:8px;align-items:flex-start}
+.hdr .sub{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px}
+.hdr .cnt{font-size:13px;color:#B5D4F4}
+.hbtns{display:flex;gap:6px}
+.hbtn{height:36px;padding:0 12px;border-radius:10px;border:0;background:#fff;color:var(--navy);font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:5px}
+.hbtn.ghost{background:rgba(255,255,255,.14);color:#fff}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.cardt{display:flex;align-items:center;gap:8px;font-weight:600;font-size:15px;margin-bottom:8px}
+.ic{width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+.lab{font-size:13px;color:var(--muted);margin:12px 0 6px}
+.big{flex:1;min-width:0;height:60px;font-size:28px;letter-spacing:6px;text-align:center;font-variant-numeric:tabular-nums;border:2px solid var(--blue2);border-radius:12px;text-transform:uppercase}
+.mid{width:100%;height:48px;font-size:22px;letter-spacing:8px;text-align:center;font-variant-numeric:tabular-nums;border-radius:10px}
+.txt{width:100%;height:48px;font-size:16px;padding:0 12px;border-radius:10px}
+.kb{width:64px;height:60px;border-radius:12px;background:var(--chip);color:var(--chipText);border:0;font-weight:600;font-size:15px;flex:none}
+.hint{font-size:12px;color:var(--faint);margin-top:6px}
+.msg{border-radius:10px;padding:10px 12px;font-size:14px;margin-top:10px;display:flex;gap:8px;align-items:flex-start}
+.msg i{font-size:18px;flex:none}
+.ok{background:var(--okBg);color:var(--ok)}.wa{background:var(--warnBg);color:var(--warn)}.er{background:var(--badBg);color:var(--bad)}
+.btn{width:100%;margin-top:10px;height:46px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn.pri{background:var(--blue);color:#fff;border:0}
+.btn.danger{color:var(--bad)}
+.btn:disabled{opacity:.5}
+.two{display:flex;gap:8px}.two .btn{flex:1}
+
+.row{display:flex;justify-content:space-between;align-items:center;padding:11px 6px;border-bottom:1px solid var(--line);cursor:pointer}
+.row:last-child{border-bottom:0}
+.chip{background:var(--chip);color:var(--chipText);border-radius:8px;padding:3px 10px;font-weight:600;font-size:17px;letter-spacing:2px;font-variant-numeric:tabular-nums;word-break:break-all}
+.cuts{display:flex;align-items:center;gap:8px;color:var(--muted);letter-spacing:4px;font-variant-numeric:tabular-nums}
+.empty{color:var(--muted);text-align:center;padding:16px 0;font-size:14px}
+
+.grid{display:grid;grid-template-columns:70px repeat(5,minmax(0,1fr));gap:5px;text-align:center;align-items:center;font-variant-numeric:tabular-nums}
+.pb{background:var(--blue);color:#fff;border-radius:10px;padding:9px 0;font-size:23px;font-weight:800}
+.pm{background:var(--amber);color:var(--amberText);border-radius:10px;padding:9px 0;font-size:20px;font-weight:400}
+.pm.none{background:var(--soft);color:var(--faint)}
+.k{color:var(--muted);font-size:14px}
+.rh{text-align:left;font-size:12px;color:var(--muted)}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:10px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+
+.login{max-width:420px;margin:0 auto}
+.banner{background:var(--warnBg);color:var(--warn);border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px;display:flex;gap:8px}
+.sync{font-size:12px;color:#B5D4F4;display:inline-flex;align-items:center;gap:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="banner hide" id="demoBanner"><i class="ti ti-flask"></i><span>Demo mode. Firebase isn't set up in this file yet, so nothing is saved.</span></div>
+
+  <div class="hdr">
+    <img class="logo" src="logo.png" alt="Emmerson Locksmiths and Security">
+    <div class="bar">
+      <h1><i class="ti ti-key" style="margin-top:3px"></i><span>Gainsborough Building Key Codes</span></h1>
+      <div class="sub hide" id="hdrSub">
+        <div><div class="cnt" id="cnt"></div><div class="sync" id="sync"></div></div>
+        <div class="hbtns">
+          <button class="hbtn" id="mkBtn"><i class="ti ti-settings"></i>Master key</button>
+          <button class="hbtn ghost" id="outBtn" aria-label="Sign out"><i class="ti ti-logout"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="loginView" class="login hide">
+    <div class="card">
+      <div class="cardt"><span class="ic" style="background:var(--chip);color:var(--blue)"><i class="ti ti-lock"></i></span>Sign in</div>
+      <div class="lab">Email</div>
+      <input id="email" class="txt" type="email" autocomplete="username" inputmode="email">
+      <div class="lab">Password</div>
+      <input id="pw" class="txt" type="password" autocomplete="current-password">
+      <div class="msg er hide" id="loginErr"></div>
+      <button class="btn pri" id="loginBtn"><i class="ti ti-login"></i>Sign in</button>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="appView" class="hide">
+    <div class="card hide" id="mkBox" style="border-color:var(--amber)">
+      <div class="cardt"><span class="ic" style="background:var(--warnBg);color:var(--warn)"><i class="ti ti-key"></i></span>Master key</div>
+      <div class="lab">Master key cuts (5 cuts, 0–8)</div>
+      <input id="mkIn" class="mid" inputmode="numeric" maxlength="5" autocomplete="off">
+      <div class="msg er hide" id="mkErr"></div>
+      <button class="btn pri" id="mkSave">Save master key</button>
+      <div class="lab" style="margin-top:18px">Backup</div>
+      <button class="btn" id="exportBtn"><i class="ti ti-download"></i>Export all codes</button>
+      <div class="hint">Saves a file of every code and the master key. Keep it somewhere safe.</div>
+    </div>
+
+    <div class="msg wa hide" id="noMaster" style="margin:0 0 12px"><i class="ti ti-alert-triangle"></i><span>Set the master key first so pinning can be worked out.</span></div>
+
+    <div class="card">
+      <div class="cardt"><span class="ic" style="background:var(--chip);color:var(--blue)"><i class="ti ti-search"></i></span>Look up or add a code</div>
+      <div style="display:flex;gap:8px">
+        <input id="code" class="big" inputmode="numeric" placeholder="Code" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+        <button id="kbBtn" class="kb" aria-label="Switch keyboard">ABC</button>
+      </div>
+      <div class="hint" id="kbHint">Tap ABC if the code has letters</div>
+
+      <div id="found" class="hide">
+        <div class="msg ok"><i class="ti ti-circle-check"></i><span id="foundMsg"></span></div>
+        <button class="btn pri" id="foundPin"><i class="ti ti-list-numbers"></i>Pinning</button>
+      </div>
+
+      <div id="nw" class="hide">
+        <div class="msg wa"><i class="ti ti-plus"></i><span id="nwMsg"></span></div>
+        <div class="lab">Change key cuts (5 cuts, 0–8)</div>
+        <input id="cuts" class="mid" inputmode="numeric" maxlength="5" placeholder="00000" autocomplete="off">
+        <div class="msg er hide" id="cutErr"></div>
+        <div class="msg wa hide" id="same"></div>
+        <button class="btn pri" id="save">Save code</button>
+      </div>
+    </div>
+
+    <div class="card hide" id="det" style="border:2px solid var(--blue2)">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <span class="chip" style="font-size:24px;padding:4px 14px" id="dCode"></span>
+        <span style="font-size:12px;color:var(--muted);white-space:nowrap">TE2 · 5 pin</span>
+      </div>
+      <div id="chart" style="margin-top:14px"></div>
+      <div class="legend"><span><span class="sw" style="background:var(--blue)"></span>Bottom pin</span><span><span class="sw" style="background:var(--amber)"></span>Master pin</span></div>
+      <div class="lab">Change key cuts</div>
+      <input id="ed" class="mid" inputmode="numeric" maxlength="5" autocomplete="off">
+      <div class="msg er hide" id="edErr"></div>
+      <div class="two"><button class="btn" id="edSave">Save cuts</button><button class="btn danger" id="del"><i class="ti ti-trash"></i>Delete</button></div>
+      <button class="btn danger hide" id="delYes">Tap again to confirm delete</button>
+      <button class="btn" id="closeDet">Close</button>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span class="cardt" style="margin:0"><span class="ic" style="background:var(--okBg);color:var(--ok)"><i class="ti ti-list"></i></span><span id="lt">All codes</span></span>
+        <span style="font-size:12px;color:var(--muted)">tap for pinning</span>
+      </div>
+      <div id="list"></div>
+      <div class="empty hide" id="empty"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ===== FIREBASE SETUP =====
+   Paste the config from Firebase console > Project settings > Your apps > Web app.
+   While apiKey still says PASTE, the app runs in demo mode with sample codes. */
+const firebaseConfig = {
+  apiKey: "PASTE_API_KEY",
+  authDomain: "PASTE.firebaseapp.com",
+  projectId: "PASTE_PROJECT_ID",
+  storageBucket: "PASTE.appspot.com",
+  messagingSenderId: "PASTE",
+  appId: "PASTE"
+};
+/* ========================== */
+
+const DEMO = firebaseConfig.apiKey.startsWith('PASTE');
+const S = {master:'', codes:[]};
+let db=null, auth=null, unsubCodes=null, unsubMaster=null;
+
+const $=i=>document.getElementById(i);
+const show=(el,on)=>$(el).classList.toggle('hide',!on);
+const ok5=s=>/^[0-8]{5}$/.test(s);
+const dg=(v,n)=>{v=v.replace(/\D/g,'');return n?v.slice(0,n):v};
+const cl=v=>v.toUpperCase().replace(/[^A-Z0-9]/g,'');
+const find=c=>S.codes.find(x=>x.code===c);
+const sortFn=(a,b)=>a.code.localeCompare(b.code,undefined,{numeric:true})||a.code.length-b.code.length||a.code.localeCompare(b.code);
+let cur=null, letters=false;
+
+/* ---------- data layer ---------- */
+const store = {
+  async addCode(code,cuts){
+    if(DEMO){S.codes.push({code,cuts});render();return}
+    await db.collection('keycodes').doc(code).set({cuts,updated:firebase.firestore.FieldValue.serverTimestamp()});
+  },
+  async setCuts(code,cuts){
+    if(DEMO){find(code).cuts=cuts;render();return}
+    await db.collection('keycodes').doc(code).update({cuts,updated:firebase.firestore.FieldValue.serverTimestamp()});
+  },
+  async delCode(code){
+    if(DEMO){S.codes=S.codes.filter(x=>x.code!==code);render();return}
+    await db.collection('keycodes').doc(code).delete();
+  },
+  async setMaster(cuts){
+    if(DEMO){S.master=cuts;render();return}
+    await db.collection('settings').doc('master').set({cuts,updated:firebase.firestore.FieldValue.serverTimestamp()});
+  }
+};
+function fail(e){alert('Could not save: '+(e&&e.message?e.message:e))}
+
+function startListening(){
+  unsubCodes=db.collection('keycodes').onSnapshot({includeMetadataChanges:true},snap=>{
+    S.codes=snap.docs.map(d=>({code:d.id,cuts:d.data().cuts||''}));
+    $('sync').innerHTML=snap.metadata.hasPendingWrites||snap.metadata.fromCache
+      ?'<i class="ti ti-cloud-off"></i>Offline, will sync':'<i class="ti ti-cloud-check"></i>Synced';
+    render();
+  },e=>{$('sync').textContent='Sync error: '+e.code});
+  unsubMaster=db.collection('settings').doc('master').onSnapshot(d=>{S.master=d.exists?(d.data().cuts||''):'';render()});
+}
+function stopListening(){unsubCodes&&unsubCodes();unsubMaster&&unsubMaster();unsubCodes=unsubMaster=null;S.codes=[];S.master=''}
+
+/* ---------- views ---------- */
+function showApp(on){show('appView',on);show('hdrSub',on);show('loginView',!on)}
+
+function render(){renderList();renderEntry();show('noMaster',!ok5(S.master));if(cur&&!$('det').classList.contains('hide')){const x=find(cur);x?chart(x):show('det',false)}}
+function renderList(){
+  const q=$('code').value,all=[...S.codes].sort(sortFn);
+  const items=q?all.filter(x=>x.code.startsWith(q)):all;
+  $('cnt').textContent=S.codes.length+(S.codes.length===1?' code':' codes')+' on file';
+  $('lt').textContent=q?'Codes starting '+q:'All codes';
+  $('list').innerHTML=items.map(x=>`<div class="row" data-c="${x.code}"><span class="chip">${x.code}</span><span class="cuts">${x.cuts}<i class="ti ti-chevron-right" style="letter-spacing:0"></i></span></div>`).join('');
+  $('empty').textContent=S.codes.length?'No codes match.':'No codes yet. Type one above to add it.';
+  show('empty',!items.length);
+}
+function renderEntry(){
+  const q=$('code').value,h=q?find(q):null;
+  show('found',!!h);show('nw',!!q&&!h);
+  if(h)$('foundMsg').innerHTML='Already on file. Change key: <b style="letter-spacing:3px">'+h.cuts+'</b>';
+  if(q&&!h){$('nwMsg').textContent='Code '+q+' is not on file yet. Add the cuts below to save it.';checkNew()}
+}
+function cutErr(v){return /9/.test(v)?'Cuts only go 0 to 8.':''}
+function checkNew(){
+  const v=$('cuts').value,e=cutErr(v);
+  $('cutErr').textContent=e;show('cutErr',!!e);
+  const d=ok5(v)?S.codes.filter(x=>x.cuts===v):[];
+  $('same').textContent=d.length?'Same cuts already used by code '+d.map(x=>x.code).join(', ')+'. Double check before saving.':'';
+  show('same',d.length>0);
+}
+function chart(x){
+  const m=S.master;
+  if(!ok5(m)){$('chart').innerHTML='<div class="msg wa"><i class="ti ti-alert-triangle"></i><span>Set the master key to see the pinning.</span></div>';return}
+  const b=[],p=[];
+  for(let i=0;i<5;i++){const c=+x.cuts[i],k=+m[i];b.push(Math.min(c,k));p.push(c===k?null:Math.abs(c-k))}
+  $('chart').innerHTML=`<div class="grid"><div></div>${[1,2,3,4,5].map(n=>`<div class="k" style="font-size:12px">${n}</div>`).join('')}
+  <div class="rh">Bottom</div>${b.map(v=>`<div class="pb">${v}</div>`).join('')}
+  <div class="rh">Master</div>${p.map(v=>v===null?'<div class="pm none">–</div>':`<div class="pm">${v}</div>`).join('')}</div>
+  <div class="grid" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)"><div class="rh">Change key</div>${x.cuts.split('').map(v=>`<div class="k">${v}</div>`).join('')}<div class="rh">Master key</div>${m.split('').map(v=>`<div class="k">${v}</div>`).join('')}</div>`;
+}
+function openDet(c){const x=find(c);if(!x)return;cur=c;$('dCode').textContent=c;$('ed').value=x.cuts;show('edErr',false);show('delYes',false);chart(x);show('det',true);$('det').scrollIntoView({behavior:'smooth',block:'nearest'})}
+function setKb(l,refocus=true){
+  letters=l;const c=$('code');
+  c.setAttribute('inputmode',l?'text':'numeric');
+  $('kbBtn').textContent=l?'123':'ABC';
+  $('kbHint').textContent=l?'Letter keyboard on. Tap 123 to go back to numbers':'Tap ABC if the code has letters';
+  if(refocus){c.blur();setTimeout(()=>c.focus(),30)}
+}
+
+/* ---------- events ---------- */
+$('kbBtn').addEventListener('click',()=>setKb(!letters));
+$('code').addEventListener('input',e=>{e.target.value=cl(e.target.value);$('cuts').value='';show('same',false);show('cutErr',false);renderEntry();renderList()});
+$('cuts').addEventListener('input',e=>{e.target.value=dg(e.target.value,5);checkNew()});
+$('save').addEventListener('click',async()=>{
+  const c=$('code').value,v=$('cuts').value;
+  if(!c||find(c))return;
+  if(!ok5(v)){$('cutErr').textContent='Enter 5 cuts, each 0 to 8.';show('cutErr',true);return}
+  const b=$('save');b.disabled=true;
+  try{await store.addCode(c,v);$('cuts').value='';if(letters)setKb(false,false);render();openDet(c)}catch(e){fail(e)}finally{b.disabled=false}
+});
+$('foundPin').addEventListener('click',()=>openDet($('code').value));
+$('list').addEventListener('click',e=>{const r=e.target.closest('.row');if(r)openDet(r.dataset.c)});
+$('ed').addEventListener('input',e=>{e.target.value=dg(e.target.value,5);const er=cutErr(e.target.value);$('edErr').textContent=er;show('edErr',!!er)});
+$('edSave').addEventListener('click',async()=>{const v=$('ed').value;if(!ok5(v)){$('edErr').textContent='Enter 5 cuts, each 0 to 8.';show('edErr',true);return}try{await store.setCuts(cur,v)}catch(e){fail(e)}});
+$('del').addEventListener('click',()=>show('delYes',true));
+$('delYes').addEventListener('click',async()=>{const c=cur;show('det',false);cur=null;try{await store.delCode(c)}catch(e){fail(e)}});
+$('closeDet').addEventListener('click',()=>{show('det',false);cur=null});
+$('mkBtn').addEventListener('click',()=>{$('mkIn').value=S.master;show('mkErr',false);$('mkBox').classList.toggle('hide')});
+$('mkIn').addEventListener('input',e=>{e.target.value=dg(e.target.value,5);show('mkErr',false)});
+$('mkSave').addEventListener('click',async()=>{const v=$('mkIn').value;if(!ok5(v)){$('mkErr').textContent='Enter 5 cuts, each 0 to 8.';show('mkErr',true);return}try{await store.setMaster(v);show('mkBox',false)}catch(e){fail(e)}});
+$('exportBtn').addEventListener('click',()=>{
+  const data={exported:new Date().toISOString(),master:S.master,codes:[...S.codes].sort(sortFn)};
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,1)],{type:'application/json'}));
+  a.download='gainsborough-key-codes-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();
+});
+
+/* ---------- login ---------- */
+const authMsg=c=>({'auth/invalid-credential':'Email or password is wrong.','auth/wrong-password':'Email or password is wrong.','auth/user-not-found':'Email or password is wrong.','auth/too-many-requests':'Too many tries. Wait a minute and try again.','auth/network-request-failed':'No connection. Check your signal and try again.'}[c]||'Could not sign in ('+c+').');
+$('loginBtn').addEventListener('click',async()=>{
+  const em=$('email').value.trim(),pw=$('pw').value;show('loginErr',false);
+  if(!em||!pw){$('loginErr').textContent='Enter your email and password.';show('loginErr',true);return}
+  $('loginBtn').disabled=true;
+  try{await auth.signInWithEmailAndPassword(em,pw)}catch(e){$('loginErr').textContent=authMsg(e.code);show('loginErr',true)}
+  finally{$('loginBtn').disabled=false}
+});
+$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')$('loginBtn').click()});
+$('outBtn').addEventListener('click',()=>{if(DEMO)return;if(confirm('Sign out?'))auth.signOut()});
+
+/* ---------- start ---------- */
+if(DEMO){
+  show('demoBanner',true);
+  S.master='35246';
+  S.codes=[{code:'0418',cuts:'13442'},{code:'1172',cuts:'15026'},{code:'2305',cuts:'17284'},{code:'961',cuts:'12640'},{code:'35501',cuts:'13806'},{code:'041',cuts:'15244'},{code:'12A4',cuts:'16420'}];
+  $('sync').textContent='Demo';showApp(true);render();
+}else{
+  firebase.initializeApp(firebaseConfig);
+  auth=firebase.auth();db=firebase.firestore();
+  db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
+  auth.onAuthStateChanged(u=>{
+    if(u){showApp(true);startListening()}
+    else{stopListening();cur=null;show('det',false);showApp(false);render()}
+  });
+}
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
