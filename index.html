@@ -82,12 +82,13 @@ input:focus{border-color:var(--blue2)}
 .cuts{display:flex;align-items:center;gap:8px;color:var(--muted);letter-spacing:4px;font-variant-numeric:tabular-nums}
 .empty{color:var(--muted);text-align:center;padding:16px 0;font-size:14px}
 
-.pc-row{display:flex;align-items:baseline;line-height:1.05}
-.pc-lbl{width:92px;flex:none;font-size:14px;font-weight:600;color:var(--muted)}
-.pc-d{display:inline-block;width:30px;text-align:center;font-variant-numeric:tabular-nums}
+.pc-row{display:grid;grid-template-columns:minmax(66px,92px) repeat(5,minmax(0,34px));align-items:baseline;line-height:1.05;white-space:nowrap}
+.pc-lbl{font-size:14px;font-weight:600;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
+.pc-d{text-align:center;font-variant-numeric:tabular-nums}
+.pc-top{align-items:center;margin-bottom:2px}
 .pc-n{font-size:13px;font-weight:600;color:var(--faint)}
-.pb{font-size:38px;font-weight:700;color:var(--text)}
-.pm{font-size:34px;font-weight:500;color:var(--text)}
+.pb{font-size:clamp(30px,10vw,38px);font-weight:700;color:var(--text)}
+.pm{font-size:clamp(27px,9vw,34px);font-weight:500;color:var(--text)}
 .pm.none{color:var(--faint)}
 .pc-k{font-size:18px;font-weight:600;color:var(--muted)}
 .pc-sep{border-top:1px solid var(--line);margin:8px 0 6px}
@@ -105,7 +106,7 @@ textarea::placeholder{text-transform:none;letter-spacing:0}
 .seg button{flex:1;border:0;background:transparent;color:var(--muted);font-weight:700;font-size:15px;height:32px;border-radius:8px;transition:background-color .2s,color .2s}
 .seg button.on{background:var(--card);color:var(--blue);box-shadow:0 0 0 1px var(--line)}
 #det{position:relative}
-.copyBtn{position:absolute;top:8px;right:8px;height:32px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--blue);font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:4px}
+.copyBtn{justify-self:start;height:28px;padding:0 9px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--blue);font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:4px}
 .copyBtn.done{color:var(--ok);border-color:var(--ok)}
 .stock{display:grid;grid-template-columns:1fr 1fr 1fr;row-gap:0;text-align:center;font-variant-numeric:tabular-nums}
 .stock .h{font-size:14px;font-weight:600;color:var(--muted);padding-bottom:4px;border-bottom:1px solid var(--line)}
@@ -113,6 +114,13 @@ textarea::placeholder{text-transform:none;letter-spacing:0}
 .stock .sz{font-weight:700}
 .stock .z{color:var(--faint)}
 .stock .t{font-weight:700;font-size:18px;padding-top:6px}
+@media (max-width:360px){
+  .tabs button{padding:0 9px;font-size:14px}
+  .seg button{font-size:14px}
+  .hdr .cnt,.sync{font-size:13px}
+  .tapHint{display:none}
+}
+.hdr .cnt,.seg button{white-space:nowrap}
 .acct{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:16px}
 .banner{background:var(--warnBg);color:var(--warn);border-radius:12px;padding:10px 12px;font-size:15px;margin-bottom:12px;display:flex;gap:8px}
 .sync{font-size:14px;color:#B5D4F4;display:inline-flex;align-items:center;gap:4px}
@@ -187,7 +195,6 @@ textarea::placeholder{text-transform:none;letter-spacing:0}
 
       <div id="detHome" class="hide">
         <div id="det">
-          <button class="copyBtn" id="copyBtn"><i class="ti ti-copy"></i><span>Copy</span></button>
           <div id="chart"></div>
         </div>
       </div>
@@ -195,7 +202,7 @@ textarea::placeholder{text-transform:none;letter-spacing:0}
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
           <span class="cardt" style="margin:0"><span class="ic" style="background:var(--okBg);color:var(--ok)"><i class="ti ti-list"></i></span><span id="lt">All codes</span></span>
-          <span style="font-size:14px;color:var(--muted)">tap for pinning</span>
+          <span class="tapHint" style="font-size:14px;color:var(--muted)">tap for pinning</span>
         </div>
         <div id="list"></div>
         <div class="empty hide" id="empty"></div>
@@ -399,8 +406,8 @@ function chart(x){
   const b=[],p=[];
   for(let i=0;i<5;i++){const c=+x.cuts[i],k=+m[i];b.push(Math.min(c,k));p.push(c===k?null:Math.abs(c-k))}
   const d=(arr,cls)=>arr.map(v=>`<span class="pc-d ${v===null?cls+' none':cls}">${v===null?'–':v}</span>`).join('');
-  const row=(l,inner)=>`<div class="pc-row"><span class="pc-lbl">${l}</span><span>${inner}</span></div>`;
-  $('chart').innerHTML=row('',d([1,2,3,4,5],'pc-n'))+row('Bottom',d(b,'pb'))+row('Master',d(p,'pm'))+'<div class="pc-sep"></div>'+row('Change key',d([...x.cuts],'pc-k'))+row('Master key',d([...m],'pc-k'));
+  const row=(l,inner)=>`<div class="pc-row"><span class="pc-lbl">${l}</span>${inner}</div>`;
+  $('chart').innerHTML=`<div class="pc-row pc-top"><button class="copyBtn" id="copyBtn"><i class="ti ti-copy"></i><span>Copy</span></button>${d([1,2,3,4,5],'pc-n')}</div>`+row('Bottom',d(b,'pb'))+row('Master',d(p,'pm'))+'<div class="pc-sep"></div>'+row('Change key',d([...x.cuts],'pc-k'))+row('Master key',d([...m],'pc-k'));
 }
 const rowEl=c=>$('list').querySelector(`.row[data-c="${c}"]`);
 function openDet(c,scroll){
@@ -451,7 +458,7 @@ async function copyText(t){
   try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.position='absolute';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();const ok=document.execCommand('copy');ta.remove();return ok}catch(e){return false}
 }
 let copyTimer=null;
-function resetCopy(){clearTimeout(copyTimer);const b=$('copyBtn');b.classList.remove('done');b.innerHTML='<i class="ti ti-copy"></i><span>Copy</span>'}
+function resetCopy(){clearTimeout(copyTimer);const b=$('copyBtn');if(!b)return;b.classList.remove('done');b.innerHTML='<i class="ti ti-copy"></i><span>Copy</span>'}
 function setTab(t){
   if(t===tab)return;const from=$(tab),to=$(t);tab=t;
   document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
@@ -474,7 +481,7 @@ function setMode(m){
 document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
 document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
 $('cutsPin').addEventListener('click',()=>{const c=$('cutsPin').dataset.c;if(c)openDet(c,true)});
-$('copyBtn').addEventListener('click',async e=>{e.stopPropagation();const x=find(cur);if(!x||!ok5(S.master))return;
+$('det').addEventListener('click',async e=>{if(!e.target.closest('.copyBtn'))return;e.stopPropagation();const x=find(cur);if(!x||!ok5(S.master))return;
   const ok=await copyText(pinText(x));const b=$('copyBtn');
   b.classList.toggle('done',ok);b.innerHTML=ok?'<i class="ti ti-check"></i><span>Copied</span>':'<i class="ti ti-x"></i><span>Couldn\'t copy</span>';
   clearTimeout(copyTimer);copyTimer=setTimeout(resetCopy,1800)});
